@@ -1,183 +1,64 @@
 #include <iostream>
 #include <string>
-#include <cmath>
 
 using namespace std;
 
-// Структура для представления даты
-struct Date {
-    int year;
-    int month;
-    int day;
+// Структура для представления времени
+struct Time {
+    int hour;
+    int minute;
+    int second;
     
-    Date(int y, int m, int d) : year(y), month(m), day(d) {}
-};
-
-// Собственные классы исключений вместо стандартных
-class InvalidArgument {
-private:
-    string message;
-public:
-    InvalidArgument(const string& msg) : message(msg) {}
-    const string& what() const { return message; }
-};
-
-class RuntimeError {
-private:
-    string message;
-public:
-    RuntimeError(const string& msg) : message(msg) {}
-    const string& what() const { return message; }
+    Time(int h = 0, int m = 0, int s = 0) : hour(h), minute(m), second(s) {}
 };
 
 // 1. Пустой класс для исключения
-class DateExceptionEmpty {};
+class EmptyTimeException {};
 
 // 2. Независимый класс с полями-параметрами функции
-class DateExceptionWithFields {
+class TimeExceptionWithFields {
 public:
-    Date date1;
-    Date date2;
+    Time start;
+    Time end;
     string message;
     
-    DateExceptionWithFields(const Date& d1, const Date& d2, const string& msg) 
-        : date1(d1), date2(d2), message(msg) {}
+    TimeExceptionWithFields(const Time& s, const Time& e, const string& msg) 
+        : start(s), end(e), message(msg) {}
 };
 
-// 3. Наследник от собственного базового исключения с полями
-class DateExceptionBase {
+// 3. Наследник от базового исключения с полями
+class BaseTimeException {
 protected:
     string message;
 public:
-    DateExceptionBase(const string& msg) : message(msg) {}
+    BaseTimeException(const string& msg) : message(msg) {}
     virtual const string& what() const { return message; }
-    virtual ~DateExceptionBase() {}
+    virtual ~BaseTimeException() {}
 };
 
-class DateExceptionStd : public DateExceptionBase {
+class TimeExceptionStd : public BaseTimeException {
 public:
-    Date date1;
-    Date date2;
+    Time start;
+    Time end;
     
-    DateExceptionStd(const Date& d1, const Date& d2, const string& msg) 
-        : DateExceptionBase(msg), date1(d1), date2(d2) {}
+    TimeExceptionStd(const Time& s, const Time& e, const string& msg) 
+        : BaseTimeException(msg), start(s), end(e) {}
 };
 
 // Вспомогательные функции
-bool isLeapYear(int year) {
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-}
-
-int daysInMonth(int month, int year) {
-    if (month == 2) {
-        return isLeapYear(year) ? 29 : 28;
-    }
-    if (month == 4 || month == 6 || month == 9 || month == 11) {
-        return 30;
-    }
-    return 31;
-}
-
-bool isValidDate(const Date& date) {
-    if (date.year < 0) return false;
-    if (date.month < 1 || date.month > 12) return false;
-    if (date.day < 1 || date.day > daysInMonth(date.month, date.year)) return false;
+bool isValidTime(const Time& time) {
+    if (time.hour < 0 || time.hour > 23) return false;
+    if (time.minute < 0 || time.minute > 59) return false;
+    if (time.second < 0 || time.second > 59) return false;
     return true;
 }
 
-// Функция для вычисления количества дней от начала эпохи до даты
-int daysFromEpoch(const Date& date) {
-    int days = date.day;
-    
-    // Добавляем дни из полных месяцев текущего года
-    for (int m = 1; m < date.month; m++) {
-        days += daysInMonth(m, date.year);
-    }
-    
-    // Добавляем дни из полных лет
-    for (int y = 0; y < date.year; y++) {
-        days += isLeapYear(y) ? 366 : 365;
-    }
-    
-    return days;
+// Функция для преобразования времени в секунды
+int timeToSeconds(const Time& time) {
+    return time.hour * 3600 + time.minute * 60 + time.second;
 }
 
-// ВАРИАНТ 1: Без спецификации исключений
-int dateDifference1(const Date& date1, const Date& date2) {
-    // Проверка валидности дат
-    if (!isValidDate(date1)) {
-        throw RuntimeError("Первая дата невалидна");
-    }
-    if (!isValidDate(date2)) {
-        throw RuntimeError("Вторая дата невалидна");
-    }
-    
-    int days1 = daysFromEpoch(date1);
-    int days2 = daysFromEpoch(date2);
-    
-    return abs(days2 - days1);
-}
-
-// ВАРИАНТ 2: Со спецификацией throw()
-int dateDifference2(const Date& date1, const Date& date2) throw() {
-    if (!isValidDate(date1)) {
-        throw DateExceptionEmpty();
-    }
-    if (!isValidDate(date2)) {
-        throw DateExceptionEmpty();
-    }
-    
-    int days1 = daysFromEpoch(date1);
-    int days2 = daysFromEpoch(date2);
-    
-    return abs(days2 - days1);
-}
-
-// ВАРИАНТ 3: С конкретной спецификацией с подходящим исключением
-int dateDifference3(const Date& date1, const Date& date2) throw(InvalidArgument) {
-    if (!isValidDate(date1)) {
-        throw InvalidArgument("Первая дата невалидна: " + 
-                              to_string(date1.day) + "." + 
-                              to_string(date1.month) + "." + 
-                              to_string(date1.year));
-    }
-    if (!isValidDate(date2)) {
-        throw InvalidArgument("Вторая дата невалидна: " + 
-                              to_string(date2.day) + "." + 
-                              to_string(date2.month) + "." + 
-                              to_string(date2.year));
-    }
-    
-    int days1 = daysFromEpoch(date1);
-    int days2 = daysFromEpoch(date2);
-    
-    return abs(days2 - days1);
-}
-
-// ВАРИАНТ 4: Спецификация с собственным реализованным исключением
-int dateDifference4(const Date& date1, const Date& date2) throw(DateExceptionStd) {
-    if (!isValidDate(date1)) {
-        throw DateExceptionStd(date1, date2, 
-                             "Первая дата невалидна: " + 
-                             to_string(date1.day) + "." + 
-                             to_string(date1.month) + "." + 
-                             to_string(date1.year));
-    }
-    if (!isValidDate(date2)) {
-        throw DateExceptionStd(date1, date2,
-                             "Вторая дата невалидна: " + 
-                             to_string(date2.day) + "." + 
-                             to_string(date2.month) + "." + 
-                             to_string(date2.year));
-    }
-    
-    int days1 = daysFromEpoch(date1);
-    int days2 = daysFromEpoch(date2);
-    
-    return abs(days2 - days1);
-}
-
-// Функция для преобразования числа в строку (замена std::to_string)
+// Функция для преобразования числа в строку
 string intToString(int value) {
     if (value == 0) return "0";
     
@@ -202,28 +83,153 @@ string intToString(int value) {
     return result;
 }
 
+// ВАРИАНТ 1: Без спецификации исключений
+int callDuration1(const Time& start, const Time& end) {
+    // Проверка валидности времени
+    if (!isValidTime(start)) {
+        throw string("Время начала разговора невалидно");
+    }
+    if (!isValidTime(end)) {
+        throw string("Время окончания разговора невалидно");
+    }
+    
+    int startSeconds = timeToSeconds(start);
+    int endSeconds = timeToSeconds(end);
+    
+    // Если время окончания меньше времени начала, считаем что разговор перешел через полночь
+    if (endSeconds < startSeconds) {
+        endSeconds += 24 * 3600; // Добавляем сутки
+    }
+    
+    int durationSeconds = endSeconds - startSeconds;
+    
+    // Переводим секунды в минуты, неполная минута считается за полную
+    int durationMinutes = durationSeconds / 60;
+    if (durationSeconds % 60 != 0) {
+        durationMinutes++; // Неполная минута считается за полную
+    }
+    
+    return durationMinutes;
+}
+
+// ВАРИАНТ 2: Со спецификацией throw()
+int callDuration2(const Time& start, const Time& end) throw() {
+    if (!isValidTime(start)) {
+        throw EmptyTimeException();
+    }
+    if (!isValidTime(end)) {
+        throw EmptyTimeException();
+    }
+    
+    int startSeconds = timeToSeconds(start);
+    int endSeconds = timeToSeconds(end);
+    
+    if (endSeconds < startSeconds) {
+        endSeconds += 24 * 3600;
+    }
+    
+    int durationSeconds = endSeconds - startSeconds;
+    int durationMinutes = durationSeconds / 60;
+    if (durationSeconds % 60 != 0) {
+        durationMinutes++;
+    }
+    
+    return durationMinutes;
+}
+
+// ВАРИАНТ 3: С конкретной спецификацией
+int callDuration3(const Time& start, const Time& end) throw(const char*) {
+    if (!isValidTime(start)) {
+        throw "Время начала разговора невалидно";
+    }
+    if (!isValidTime(end)) {
+        throw "Время окончания разговора невалидно";
+    }
+    
+    int startSeconds = timeToSeconds(start);
+    int endSeconds = timeToSeconds(end);
+    
+    if (endSeconds < startSeconds) {
+        endSeconds += 24 * 3600;
+    }
+    
+    int durationSeconds = endSeconds - startSeconds;
+    int durationMinutes = durationSeconds / 60;
+    if (durationSeconds % 60 != 0) {
+        durationMinutes++;
+    }
+    
+    return durationMinutes;
+}
+
+// ВАРИАНТ 4: Спецификация с собственным реализованным исключением
+int callDuration4(const Time& start, const Time& end) throw(TimeExceptionStd) {
+    if (!isValidTime(start)) {
+        throw TimeExceptionStd(start, end, 
+                             "Время начала разговора невалидно: " + 
+                             intToString(start.hour) + ":" + 
+                             intToString(start.minute) + ":" + 
+                             intToString(start.second));
+    }
+    if (!isValidTime(end)) {
+        throw TimeExceptionStd(start, end,
+                             "Время окончания разговора невалидно: " + 
+                             intToString(end.hour) + ":" + 
+                             intToString(end.minute) + ":" + 
+                             intToString(end.second));
+    }
+    
+    int startSeconds = timeToSeconds(start);
+    int endSeconds = timeToSeconds(end);
+    
+    if (endSeconds < startSeconds) {
+        endSeconds += 24 * 3600;
+    }
+    
+    int durationSeconds = endSeconds - startSeconds;
+    int durationMinutes = durationSeconds / 60;
+    if (durationSeconds % 60 != 0) {
+        durationMinutes++;
+    }
+    
+    return durationMinutes;
+}
+
 // Демонстрация работы всех вариантов
 int main() {
-    cout << "=== Демонстрация работы с исключениями для разности дат ===" << endl;
+    cout << "=== ВАРИАНТ 13: Вычисление продолжительности телефонного разговора в минутах ===" << endl;
+    cout << "=== Демонстрация четырех вариантов обработки исключений ===" << endl;
     
     // Тестовые данные
-    Date validDate1(2023, 1, 15);
-    Date validDate2(2023, 12, 31);
-    Date invalidDate1(2023, 2, 30);  // Невалидная дата
-    Date invalidDate2(2023, 13, 1);  // Невалидная дата
+    Time validStart1(10, 30, 15);
+    Time validEnd1(10, 45, 30);
+    Time validStart2(23, 55, 0);
+    Time validEnd2(0, 5, 0);    // Разговор через полночь
+    Time invalidTime1(25, 30, 0);  // Невалидное время (часы > 23)
+    Time invalidTime2(10, 70, 0);  // Невалидное время (минуты > 59)
+    Time invalidTime3(10, 30, 70); // Невалидное время (секунды > 59)
+    
+    cout << "\nТестовые времена:" << endl;
+    cout << "Валидное начало 1: " << validStart1.hour << ":" << validStart1.minute << ":" << validStart1.second << endl;
+    cout << "Валидное окончание 1: " << validEnd1.hour << ":" << validEnd1.minute << ":" << validEnd1.second << endl;
+    cout << "Валидное начало 2: " << validStart2.hour << ":" << validStart2.minute << ":" << validStart2.second << endl;
+    cout << "Валидное окончание 2: " << validEnd2.hour << ":" << validEnd2.minute << ":" << validEnd2.second << endl;
+    cout << "Невалидное время 1: " << invalidTime1.hour << ":" << invalidTime1.minute << ":" << invalidTime1.second << endl;
+    cout << "Невалидное время 2: " << invalidTime2.hour << ":" << invalidTime2.minute << ":" << invalidTime2.second << endl;
     
     // ТЕСТ 1: Без спецификации исключений
     cout << "\n--- ТЕСТ 1: Без спецификации исключений ---" << endl;
     try {
-        int diff1 = dateDifference1(validDate1, validDate2);
-        cout << "Разница между датами: " << diff1 << " дней" << endl;
+        cout << "Попытка вычисления с валидными временами..." << endl;
+        int duration1 = callDuration1(validStart1, validEnd1);
+        cout << "Успех! Продолжительность разговора: " << duration1 << " минут" << endl;
         
-        // Проверим с невалидной датой
-        int diff2 = dateDifference1(invalidDate1, validDate2);
+        cout << "Попытка вычисления с невалидным временем..." << endl;
+        int duration2 = callDuration1(invalidTime1, validEnd1);
         cout << "Эта строка не должна выводиться" << endl;
     }
-    catch (const RuntimeError& e) {
-        cout << "Поймано исключение: " << e.what() << endl;
+    catch (const string& e) {
+        cout << "Поймано исключение string: " << e << endl;
     }
     catch (...) {
         cout << "Поймано неизвестное исключение" << endl;
@@ -232,32 +238,34 @@ int main() {
     // ТЕСТ 2: Со спецификацией throw()
     cout << "\n--- ТЕСТ 2: Со спецификацией throw() ---" << endl;
     try {
-        int diff1 = dateDifference2(validDate1, validDate2);
-        cout << "Разница между датами: " << diff1 << " дней" << endl;
+        cout << "Попытка вычисления с валидными временами..." << endl;
+        int duration1 = callDuration2(validStart1, validEnd1);
+        cout << "Успех! Продолжительность разговора: " << duration1 << " минут" << endl;
         
-        // Проверим с невалидной датой
-        int diff2 = dateDifference2(validDate1, invalidDate2);
+        cout << "Попытка вычисления с невалидным временем..." << endl;
+        int duration2 = callDuration2(validStart1, invalidTime2);
         cout << "Эта строка не должна выводиться" << endl;
     }
-    catch (const DateExceptionEmpty&) {
-        cout << "Поймано исключение DateExceptionEmpty" << endl;
+    catch (const EmptyTimeException&) {
+        cout << "Поймано исключение EmptyTimeException" << endl;
     }
     catch (...) {
         cout << "Поймано другое исключение" << endl;
     }
     
-    // ТЕСТ 3: С конкретной спецификацией с исключением
-    cout << "\n--- ТЕСТ 3: С исключением InvalidArgument ---" << endl;
+    // ТЕСТ 3: С конкретной спецификацией
+    cout << "\n--- ТЕСТ 3: С конкретной спецификацией (const char*) ---" << endl;
     try {
-        int diff1 = dateDifference3(validDate1, validDate2);
-        cout << "Разница между датами: " << diff1 << " дней" << endl;
+        cout << "Попытка вычисления с валидными временами..." << endl;
+        int duration1 = callDuration3(validStart1, validEnd1);
+        cout << "Успех! Продолжительность разговора: " << duration1 << " минут" << endl;
         
-        // Проверим с невалидной датой
-        int diff2 = dateDifference3(invalidDate1, invalidDate2);
+        cout << "Попытка вычисления с невалидными временами..." << endl;
+        int duration2 = callDuration3(invalidTime1, invalidTime2);
         cout << "Эта строка не должна выводиться" << endl;
     }
-    catch (const InvalidArgument& e) {
-        cout << "Поймано исключение InvalidArgument: " << e.what() << endl;
+    catch (const char* e) {
+        cout << "Поймано исключение const char*: " << e << endl;
     }
     catch (...) {
         cout << "Поймано другое исключение" << endl;
@@ -266,17 +274,18 @@ int main() {
     // ТЕСТ 4: С собственным исключением (наследник базового)
     cout << "\n--- ТЕСТ 4: С собственным исключением ---" << endl;
     try {
-        int diff1 = dateDifference4(validDate1, validDate2);
-        cout << "Разница между датами: " << diff1 << " дней" << endl;
+        cout << "Попытка вычисления с валидными временами..." << endl;
+        int duration1 = callDuration4(validStart1, validEnd1);
+        cout << "Успех! Продолжительность разговора: " << duration1 << " минут" << endl;
         
-        // Проверим с невалидной датой
-        int diff2 = dateDifference4(validDate1, invalidDate1);
+        cout << "Попытка вычисления с невалидным временем..." << endl;
+        int duration2 = callDuration4(validStart1, invalidTime3);
         cout << "Эта строка не должна выводиться" << endl;
     }
-    catch (const DateExceptionStd& e) {
-        cout << "Поймано исключение DateExceptionStd: " << e.what() << endl;
-        cout << "Дата1: " << e.date1.day << "." << e.date1.month << "." << e.date1.year << endl;
-        cout << "Дата2: " << e.date2.day << "." << e.date2.month << "." << e.date2.year << endl;
+    catch (const TimeExceptionStd& e) {
+        cout << "Поймано исключение TimeExceptionStd: " << e.what() << endl;
+        cout << "Начало: " << e.start.hour << ":" << e.start.minute << ":" << e.start.second << endl;
+        cout << "Окончание: " << e.end.hour << ":" << e.end.minute << ":" << e.end.second << endl;
     }
     catch (...) {
         cout << "Поймано другое исключение" << endl;
@@ -285,83 +294,76 @@ int main() {
     // ТЕСТ 5: Демонстрация работы с независимым классом исключения
     cout << "\n--- ТЕСТ 5: Независимый класс исключения ---" << endl;
     try {
-        // Используем функцию без спецификации, но бросаем наш класс
-        if (!isValidDate(invalidDate2)) {
-            throw DateExceptionWithFields(validDate1, invalidDate2, 
-                                        "Обнаружена невалидная дата в операции");
+        cout << "Проверка валидности времени..." << endl;
+        if (!isValidTime(invalidTime1)) {
+            throw TimeExceptionWithFields(validStart1, invalidTime1, 
+                                        "Обнаружено невалидное время в операции");
         }
     }
-    catch (const DateExceptionWithFields& e) {
-        cout << "Поймано исключение DateExceptionWithFields: " << e.message << endl;
-        cout << "Дата1: " << e.date1.day << "." << e.date1.month << "." << e.date1.year << endl;
-        cout << "Дата2: " << e.date2.day << "." << e.date2.month << "." << e.date2.year << endl;
+    catch (const TimeExceptionWithFields& e) {
+        cout << "Поймано исключение TimeExceptionWithFields: " << e.message << endl;
+        cout << "Начало: " << e.start.hour << ":" << e.start.minute << ":" << e.start.second << endl;
+        cout << "Окончание: " << e.end.hour << ":" << e.end.minute << ":" << e.end.second << endl;
     }
     
-    // ТЕСТ 6: Демонстрация корректных вычислений
+    // ТЕСТ 6: Демонстрация корректных вычислений с разными сценариями
     cout << "\n--- ТЕСТ 6: Корректные вычисления ---" << endl;
-    Date date1(2023, 1, 1);
-    Date date2(2023, 1, 15);
-    Date date3(2024, 1, 1);  // Високосный год
     
-    try {
-        cout << "Разница между 01.01.2023 и 15.01.2023: " 
-             << dateDifference1(date1, date2) << " дней" << endl;
-        cout << "Разница между 01.01.2023 и 01.01.2024: " 
-             << dateDifference1(date1, date3) << " дней" << endl;
-             
-        // Проверим граничные случаи
-        Date date4(2000, 2, 29); // Високосный год
-        Date date5(2000, 3, 1);
-        cout << "Разница между 29.02.2000 и 01.03.2000: " 
-             << dateDifference1(date4, date5) << " дней" << endl;
-    }
-    catch (const RuntimeError& e) {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-    catch (const InvalidArgument& e) {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-    
-    // ТЕСТ 7: Демонстрация всех типов исключений в одном блоке
-    cout << "\n--- ТЕСТ 7: Обработка разных исключений в одном блоке ---" << endl;
-    
-    // Массив тестовых случаев
-    struct TestCase {
-        Date date1;
-        Date date2;
-        string description;
+    Time testCases[][2] = {
+        {Time(10, 0, 0), Time(10, 15, 0)},     // Ровно 15 минут
+        {Time(10, 0, 0), Time(10, 15, 30)},    // 15 минут 30 секунд -> 16 минут
+        {Time(10, 0, 0), Time(10, 0, 45)},     // 45 секунд -> 1 минута
+        {Time(23, 55, 0), Time(0, 5, 0)},      // Через полночь
+        {Time(10, 30, 0), Time(10, 30, 1)}     // 1 секунда -> 1 минута
     };
     
-    TestCase testCases[] = {
-        {validDate1, validDate2, "Обе даты валидны"},
-        {invalidDate1, validDate2, "Первая дата невалидна"},
-        {validDate1, invalidDate2, "Вторая дата невалидна"},
-        {invalidDate1, invalidDate2, "Обе даты невалидны"}
+    string descriptions[] = {
+        "Ровно 15 минут",
+        "15 минут 30 секунд (неполная минута)",
+        "45 секунд (неполная минута)", 
+        "Через полночь (10 минут)",
+        "1 секунда (неполная минута)"
+    };
+    
+    for (int i = 0; i < 5; i++) {
+        try {
+            int duration = callDuration1(testCases[i][0], testCases[i][1]);
+            cout << descriptions[i] << ": " << duration << " минут" << endl;
+            cout << "  (" << testCases[i][0].hour << ":" << testCases[i][0].minute << ":" << testCases[i][0].second;
+            cout << " -> " << testCases[i][1].hour << ":" << testCases[i][1].minute << ":" << testCases[i][1].second << ")" << endl;
+        }
+        catch (...) {
+            cout << "Ошибка при вычислении для " << descriptions[i] << endl;
+        }
+    }
+    
+    // ТЕСТ 7: Демонстрация обработки граничных случаев
+    cout << "\n--- ТЕСТ 7: Граничные случаи ---" << endl;
+    
+    Time edgeCases[][2] = {
+        {Time(0, 0, 0), Time(0, 0, 59)},   // 59 секунд -> 1 минута
+        {Time(0, 0, 0), Time(0, 1, 0)},    // Ровно 1 минута
+        {Time(23, 59, 0), Time(0, 1, 0)},  // Через полночь (2 минуты)
+        {Time(0, 0, 0), Time(23, 59, 59)}  // Почти полные сутки
+    };
+    
+    string edgeDescriptions[] = {
+        "59 секунд (неполная минута)",
+        "Ровно 1 минута",
+        "Через полночь 2 минуты", 
+        "Почти полные сутки"
     };
     
     for (int i = 0; i < 4; i++) {
-        cout << "\nТест " << (i + 1) << ": " << testCases[i].description << endl;
-        
         try {
-            int diff = dateDifference1(testCases[i].date1, testCases[i].date2);
-            cout << "Успех! Разница: " << diff << " дней" << endl;
-        }
-        catch (const RuntimeError& e) {
-            cout << "RuntimeError: " << e.what() << endl;
-        }
-        catch (const DateExceptionEmpty&) {
-            cout << "DateExceptionEmpty поймано" << endl;
-        }
-        catch (const InvalidArgument& e) {
-            cout << "InvalidArgument: " << e.what() << endl;
-        }
-        catch (const DateExceptionStd& e) {
-            cout << "DateExceptionStd: " << e.what() << endl;
+            int duration = callDuration1(edgeCases[i][0], edgeCases[i][1]);
+            cout << edgeDescriptions[i] << ": " << duration << " минут" << endl;
         }
         catch (...) {
-            cout << "Неизвестное исключение" << endl;
+            cout << "Ошибка при вычислении для " << edgeDescriptions[i] << endl;
         }
     }
     
+    cout << "\n=== Программа завершена ===" << endl;
     return 0;
 }
