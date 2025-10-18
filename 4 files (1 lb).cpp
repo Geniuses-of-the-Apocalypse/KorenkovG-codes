@@ -112,8 +112,8 @@ int callDuration1(const Time& start, const Time& end) {
     return durationMinutes;
 }
 
-// ВАРИАНТ 2: Со спецификацией throw()
-int callDuration2(const Time& start, const Time& end) throw() {
+// ВАРИАНТ 2: Со спецификацией throw() - убираем throw()
+int callDuration2(const Time& start, const Time& end) {
     if (!isValidTime(start)) {
         throw EmptyTimeException();
     }
@@ -137,8 +137,8 @@ int callDuration2(const Time& start, const Time& end) throw() {
     return durationMinutes;
 }
 
-// ВАРИАНТ 3: С конкретной спецификацией
-int callDuration3(const Time& start, const Time& end) throw(const char*) {
+// ВАРИАНТ 3: С конкретной спецификацией - убираем throw()
+int callDuration3(const Time& start, const Time& end) {
     if (!isValidTime(start)) {
         throw "Время начала разговора невалидно";
     }
@@ -162,8 +162,8 @@ int callDuration3(const Time& start, const Time& end) throw(const char*) {
     return durationMinutes;
 }
 
-// ВАРИАНТ 4: Спецификация с собственным реализованным исключением
-int callDuration4(const Time& start, const Time& end) throw(TimeExceptionStd) {
+// ВАРИАНТ 4: Спецификация с собственным реализованным исключением - убираем throw()
+int callDuration4(const Time& start, const Time& end) {
     if (!isValidTime(start)) {
         throw TimeExceptionStd(start, end, 
                              "Время начала разговора невалидно: " + 
@@ -235,8 +235,8 @@ int main() {
         cout << "Поймано неизвестное исключение" << endl;
     }
     
-    // ТЕСТ 2: Со спецификацией throw()
-    cout << "\n--- ТЕСТ 2: Со спецификацией throw() ---" << endl;
+    // ТЕСТ 2: Со спецификацией throw() - теперь без throw в сигнатуре
+    cout << "\n--- ТЕСТ 2: Использование пустого класса исключения ---" << endl;
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration2(validStart1, validEnd1);
@@ -253,8 +253,8 @@ int main() {
         cout << "Поймано другое исключение" << endl;
     }
     
-    // ТЕСТ 3: С конкретной спецификацией
-    cout << "\n--- ТЕСТ 3: С конкретной спецификацией (const char*) ---" << endl;
+    // ТЕСТ 3: С конкретной спецификацией - теперь без throw в сигнатуре
+    cout << "\n--- ТЕСТ 3: Использование исключения const char* ---" << endl;
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration3(validStart1, validEnd1);
@@ -271,8 +271,8 @@ int main() {
         cout << "Поймано другое исключение" << endl;
     }
     
-    // ТЕСТ 4: С собственным исключением (наследник базового)
-    cout << "\n--- ТЕСТ 4: С собственным исключением ---" << endl;
+    // ТЕСТ 4: С собственным исключением - теперь без throw в сигнатуре
+    cout << "\n--- ТЕСТ 4: Использование собственного класса исключения ---" << endl;
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration4(validStart1, validEnd1);
@@ -362,6 +362,24 @@ int main() {
         catch (...) {
             cout << "Ошибка при вычислении для " << edgeDescriptions[i] << endl;
         }
+    }
+
+    // ТЕСТ 8: Демонстрация всех вариантов функций
+    cout << "\n--- ТЕСТ 8: Сравнение всех четырех вариантов ---" << endl;
+    Time testStart(14, 20, 0);
+    Time testEnd(14, 35, 45);
+    
+    cout << "Тестовый разговор: " << testStart.hour << ":" << testStart.minute << ":" << testStart.second;
+    cout << " -> " << testEnd.hour << ":" << testEnd.minute << ":" << testEnd.second << endl;
+    
+    try {
+        cout << "Вариант 1: " << callDuration1(testStart, testEnd) << " минут" << endl;
+        cout << "Вариант 2: " << callDuration2(testStart, testEnd) << " минут" << endl;
+        cout << "Вариант 3: " << callDuration3(testStart, testEnd) << " минут" << endl;
+        cout << "Вариант 4: " << callDuration4(testStart, testEnd) << " минут" << endl;
+    }
+    catch (...) {
+        cout << "Ошибка при вычислении" << endl;
     }
     
     cout << "\n=== Программа завершена ===" << endl;
