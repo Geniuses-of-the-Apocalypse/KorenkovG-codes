@@ -116,22 +116,21 @@ MoneyStruct mulByNum(const MoneyStruct& m, double num) {
 }
 
 //                                -операции сравнения-
-bool CRavno(const MoneyStruct& a, const MoneyStruct& b) {
+bool eq(const MoneyStruct& a, const MoneyStruct& b) {
     return fabs(a.total - b.total) < 0.001;
 }
 
-bool CNeravno(const MoneyStruct& a, const MoneyStruct& b) {
-    return !CRavno(a, b);
+bool neq(const MoneyStruct& a, const MoneyStruct& b) {
+    return !eq(a, b);
 }
 
-bool CBolshe(const MoneyStruct& a, const MoneyStruct& b) {
+bool gt(const MoneyStruct& a, const MoneyStruct& b) {
     return a.total > b.total;
 }
 
-bool CMenshe(const MoneyStruct& a, const MoneyStruct& b) {
+bool lt(const MoneyStruct& a, const MoneyStruct& b) {
     return a.total < b.total;
 }
-
 // ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ КЛАСС С ЗАКРЫТЫМИ ПОЛЯМИ =====================================================================================
 
 class MoneyClass {
@@ -316,22 +315,21 @@ MoneyClass MoneyClass::mulByNum(double num) const {
 }
 
 //                                -операции сравнения-
-bool MoneyClass::CRavno(const MoneyClass& other) const {
+bool MoneyClass::eq(const MoneyClass& other) const {
     return fabs(this->total - other.total) < 0.001;
 }
 
-bool MoneyClass::CNeravno(const MoneyClass& other) const {
-    return !CRavno(other);
+bool MoneyClass::neq(const MoneyClass& other) const {
+    return !eq(other);
 }
 
-bool MoneyClass::CBolshe(const MoneyClass& other) const {
+bool MoneyClass::gt(const MoneyClass& other) const {
     return this->total > other.total;
 }
 
-bool MoneyClass::CMenshe(const MoneyClass& other) const {
+bool MoneyClass::lt(const MoneyClass& other) const {
     return this->total < other.total;
 }
-
 // ===== ДЕМОНСТРАЦИЯ =====
 
 void demoStruct() {
