@@ -98,7 +98,6 @@ double div(const MoneyStruct& a, const MoneyStruct& b) {
         throw "Ошибка: деление на ноль!";
     }
     return a.total / b.total;
-    
 }
 
 MoneyStruct divByNum(const MoneyStruct& m, double num) {
@@ -117,19 +116,19 @@ MoneyStruct mulByNum(const MoneyStruct& m, double num) {
 }
 
 //                                -операции сравнения-
-bool eq(const MoneyStruct& a, const MoneyStruct& b) {
+bool CRavno(const MoneyStruct& a, const MoneyStruct& b) {
     return fabs(a.total - b.total) < 0.001;
 }
 
-bool neq(const MoneyStruct& a, const MoneyStruct& b) {
-    return !eq(a, b);
+bool CNeravno(const MoneyStruct& a, const MoneyStruct& b) {
+    return !CRavno(a, b);
 }
 
-bool gt(const MoneyStruct& a, const MoneyStruct& b) {
+bool CBolshe(const MoneyStruct& a, const MoneyStruct& b) {
     return a.total > b.total;
 }
 
-bool lt(const MoneyStruct& a, const MoneyStruct& b) {
+bool CMenshe(const MoneyStruct& a, const MoneyStruct& b) {
     return a.total < b.total;
 }
 
@@ -316,25 +315,21 @@ MoneyClass MoneyClass::mulByNum(double num) const {
     return res;
 }
 
-// Операции сравнения
-bool MoneyClass::eq(const MoneyClass& other) const {
+//                                -операции сравнения-
+bool MoneyClass::CRavno(const MoneyClass& other) const {
     return fabs(this->total - other.total) < 0.001;
 }
 
-bool MoneyClass::neq(const MoneyClass& other) const {
-    return !eq(other);
+bool MoneyClass::CNeravno(const MoneyClass& other) const {
+    return !CRavno(other);
 }
 
-bool MoneyClass::gt(const MoneyClass& other) const {
+bool MoneyClass::CBolshe(const MoneyClass& other) const {
     return this->total > other.total;
 }
 
-bool MoneyClass::lt(const MoneyClass& other) const {
+bool MoneyClass::CMenshe(const MoneyClass& other) const {
     return this->total < other.total;
-}
-
-double MoneyClass::getTotal() const {
-    return total;
 }
 
 // ===== ДЕМОНСТРАЦИЯ =====
