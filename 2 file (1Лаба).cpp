@@ -80,23 +80,19 @@ Money::Money(const Money& other) : total(other.total) {
     }
 }
 
-// Закрытый метод нормализации - распределение суммы по номиналам
-void Money::normalize(double amt) {
+void Money::normalize(double amt) { // нормализации суммы по номиналам
     total = amt;
-    
-    // Обнуляем счетчики
-    for (int i = 0; i < R_COUNT; i++) r_cnt[i] = 0;
+
+    for (int i = 0; i < R_COUNT; i++) r_cnt[i] = 0; // обнуляем счетчики
     for (int i = 0; i < K_COUNT; i++) k_cnt[i] = 0;
     
-    // Распределяем рубли
     int rub = (int)amt;
-    for (int i = 0; i < R_COUNT; i++) {
+    for (int i = 0; i < R_COUNT; i++) {   // распределение рублей
         r_cnt[i] = rub / r_nom[i];
         rub %= r_nom[i];
     }
     
-    // Распределяем копейки
-    int kop = (int)((amt - (int)amt) * 100 + 0.5);
+    int kop = (int)((amt - (int)amt) * 100 + 0.5); // распределение копеек
     for (int i = 0; i < K_COUNT; i++) {
         int k_val = (int)(k_nom[i] * 100);
         k_cnt[i] = kop / k_val;
@@ -104,12 +100,10 @@ void Money::normalize(double amt) {
     }
 }
 
-// Публичный метод инициализации
 void Money::init(double amt) {
     normalize(amt);
 }
 
-// Ввод суммы с клавиатуры
 void Money::read() {
     double amt;
     cout << "Введите сумму: ";
@@ -117,11 +111,9 @@ void Money::read() {
     normalize(amt);
 }
 
-// Вывод суммы и состава на экран
 void Money::display() const {
     cout << "Сумма: " << total << " руб." << endl;
     cout << "Состав:" << endl;
-    
     cout << "Рубли: ";
     bool has_r = false;
     for (int i = 0; i < R_COUNT; i++) {
@@ -132,7 +124,6 @@ void Money::display() const {
     }
     if (!has_r) cout << "нет";
     cout << endl;
-    
     cout << "Копейки: ";
     bool has_k = false;
     for (int i = 0; i < K_COUNT; i++) {
@@ -145,22 +136,18 @@ void Money::display() const {
     cout << endl;
 }
 
-// Преобразование суммы в строку
-string Money::toString() const {
+string Money::toString() const { // преобразование суммы в строку
     string str = to_string(total);
     return str.substr(0, str.find('.') + 3) + " руб.";
 }
 
-// Арифметические операции
-
-// Сложение сумм
+//                                            -арифметические операции-
 Money Money::add(const Money& other) const {
     Money res;
     res.normalize(this->total + other.total);
     return res;
 }
 
-// Вычитание сумм
 Money Money::sub(const Money& other) const {
     if (this->total < other.total) {
         throw "Ошибка: отрицательная сумма!";
@@ -170,7 +157,6 @@ Money Money::sub(const Money& other) const {
     return res;
 }
 
-// Деление суммы на сумму
 double Money::div(const Money& other) const {
     if (other.total == 0) {
         throw "Ошибка: деление на ноль!";
@@ -178,7 +164,6 @@ double Money::div(const Money& other) const {
     return this->total / other.total;
 }
 
-// Деление суммы на число
 Money Money::divByNum(double num) const {
     if (num == 0) {
         throw "Ошибка: деление на ноль!";
@@ -188,31 +173,26 @@ Money Money::divByNum(double num) const {
     return res;
 }
 
-// Умножение суммы на число
 Money Money::mulByNum(double num) const {
     Money res;
     res.normalize(this->total * num);
     return res;
 }
 
-// Операции сравнения
+//                                      -операции сравнения-
 
-// Проверка на равенство
 bool Money::eq(const Money& other) const {
     return fabs(this->total - other.total) < 0.001;
 }
 
-// Проверка на неравенство
 bool Money::neq(const Money& other) const {
     return !eq(other);
 }
 
-// Проверка "больше"
 bool Money::gt(const Money& other) const {
     return this->total > other.total;
 }
 
-// Проверка "меньше"
 bool Money::lt(const Money& other) const {
     return this->total < other.total;
 }
@@ -220,11 +200,10 @@ bool Money::lt(const Money& other) const {
 int main() {
     cout << "=== Лабораторная работа №1 (Конструкторы) ===" << endl;
     
-    // Демонстрация конструкторов
     cout << "1. Тестирование конструкторов:" << endl;
-    Money m1;                    // Конструктор без аргументов
-    Money m2(150.75);           // Конструктор инициализации
-    Money m3(m2);               // Конструктор копирования
+    Money m1;                    // конструктор без аргументов
+    Money m2(150.75);           // конструктор инициализации
+    Money m3(m2);               // конструктор копирования
     
     cout << "m1 (по умолчанию):" << endl;
     m1.display();
@@ -233,7 +212,6 @@ int main() {
     cout << "m3 (копия m2):" << endl;
     m3.display();
     
-    // Демонстрация арифметических операций
     cout << "\n2. Арифметические операции:" << endl;
     
     Money sum = m2.add(m3);
@@ -255,21 +233,18 @@ int main() {
     cout << "m2 * 2 = ";
     mulNum.display();
     
-    // Демонстрация операций сравнения
     cout << "\n3. Операции сравнения:" << endl;
     cout << "m2 == m3: " << (m2.eq(m3) ? "да" : "нет") << endl;
     cout << "m2 != m1: " << (m2.neq(m1) ? "да" : "нет") << endl;
     cout << "m2 > m1: " << (m2.gt(m1) ? "да" : "нет") << endl;
     cout << "m2 < m3: " << (m2.lt(m3) ? "да" : "нет") << endl;
     
-    // Демонстрация работы с массивами объектов
     cout << "\n4. Массив объектов:" << endl;
     Money arr[3] = { Money(50.25), Money(100.50), Money(200.75) };
     for (int i = 0; i < 3; i++) {
         cout << "arr[" << i << "]: " << arr[i].toString() << endl;
     }
     
-    // Дополнительные тесты
     cout << "\n5. Дополнительные тесты:" << endl;
     Money test1(10.10);
     Money test2(5.05);
