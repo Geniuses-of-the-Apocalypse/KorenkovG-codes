@@ -6,54 +6,46 @@ using namespace std;
 
 class Money {
 private:
-    static const int R_COUNT = 9;  // количество номиналов рублей
-    static const int K_COUNT = 4;  // количество номиналов копеек
+    static const int R_COUNT = 9;  // кол-во  рублей
+    static const int K_COUNT = 4;  // кол-во  копеек
     
-    int r_nom[9];  // номиналы рублей
-    int r_cnt[9];  // количество купюр каждого номинала
+    int r_nom[9];  // номиналы 
+    int r_cnt[9];  // количество купюр
     
-    double k_nom[4];  // номиналы копеек
-    int k_cnt[4];     // количество монет каждого номинала
+    double k_nom[4];  // номиналы 
+    int k_cnt[4];     // количество монет
     
-    double total;     // общая сумма
+    double total; 
     
     void normalize(double amt);  // нормализация суммы по номиналам
 
 public:
-    // Конструкторы
     Money();
     Money(double amt);
     Money(const Money& other);
     
-    // Основные методы
     void init(double amt);
     void read();
     void display() const;
     string toString() const;
     
-    // Арифметические операции
     Money add(const Money& other) const;
     Money sub(const Money& other) const;
     double div(const Money& other) const;
     Money divByNum(double num) const;
     Money mulByNum(double num) const;
     
-    // Операции сравнения
     bool eq(const Money& other) const;
     bool neq(const Money& other) const;
     bool gt(const Money& other) const;
     bool lt(const Money& other) const;
 };
 
-// Реализация методов ВНЕ класса
 
-// Конструктор без аргументов
-Money::Money() : total(0) {
-    // Инициализация номиналов рублей
+Money::Money() : total(0) { // инициализация номинало
+
     int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
-    // Инициализация номиналов копеек
     double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
-    
     for (int i = 0; i < R_COUNT; i++) {
         r_nom[i] = temp_r_nom[i];
         r_cnt[i] = 0;
@@ -64,18 +56,15 @@ Money::Money() : total(0) {
     }
 }
 
-// Конструктор инициализации из double
-Money::Money(double amt) {
+Money::Money(double amt) { // конструктор инициализации из double
     int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
     double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
-    
     for (int i = 0; i < R_COUNT; i++) {
         r_nom[i] = temp_r_nom[i];
     }
     for (int i = 0; i < K_COUNT; i++) {
         k_nom[i] = temp_k_nom[i];
     }
-    
     normalize(amt);
 }
 
