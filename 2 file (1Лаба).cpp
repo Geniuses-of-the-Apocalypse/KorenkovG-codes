@@ -56,7 +56,7 @@ Money::Money() : total(0) { // инициализация номинало
     }
 }
 
-Money::Money(double amt) { // конструктор инициализации из double
+Money::Money(double amt) { // конструктор инициализации 
     int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
     double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
     for (int i = 0; i < R_COUNT; i++) {
@@ -68,8 +68,7 @@ Money::Money(double amt) { // конструктор инициализации 
     normalize(amt);
 }
 
-// Конструктор копирования
-Money::Money(const Money& other) : total(other.total) {
+Money::Money(const Money& other) : total(other.total) { // конструктор копирования
     for (int i = 0; i < R_COUNT; i++) {
         r_nom[i] = other.r_nom[i];
         r_cnt[i] = other.r_cnt[i];
@@ -104,14 +103,14 @@ void Money::init(double amt) {
     normalize(amt);
 }
 
-void Money::read() {
+void Money::read() { // ввод
     double amt;
     cout << "Введите сумму: ";
     cin >> amt;
     normalize(amt);
 }
 
-void Money::display() const {
+void Money::display() const { // вывод
     cout << "Сумма: " << total << " руб." << endl;
     cout << "Состав:" << endl;
     cout << "Рубли: ";
@@ -132,7 +131,7 @@ void Money::display() const {
             has_k = true;
         }
     }
-    if (!has_k) cout << "нет";
+    if (!has_k) cout << "нет"; // нет вообще
     cout << endl;
 }
 
