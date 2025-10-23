@@ -58,7 +58,7 @@ void display(const MoneyStruct& m) {
             has_r = true;
         }
     }
-    if (!has_r) cout << "нет";
+    if (!has_r) cout << "нет"; // нет вообще
     cout << endl;
     
     cout << "Копейки: ";
@@ -69,7 +69,7 @@ void display(const MoneyStruct& m) {
             has_k = true;
         }
     }
-    if (!has_k) cout << "нет";
+    if (!has_k) cout << "нет"; // нет вообще
     cout << endl;
 }
 
