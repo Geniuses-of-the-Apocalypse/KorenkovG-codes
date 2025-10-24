@@ -197,7 +197,6 @@ bool Money::lt(const Money& other) const {
 }
 
 int main() {
-    cout << "=== Лабораторная работа №1 (Конструкторы) ===" << endl;
     
     cout << "1. Тестирование конструкторов:" << endl;
     Money m1;                    // конструктор без аргументов
