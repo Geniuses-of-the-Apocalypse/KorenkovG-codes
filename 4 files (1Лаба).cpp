@@ -3,7 +3,6 @@
 
 using namespace std;
 
-// Структура для представления времени
 struct Time {
     int hour;
     int minute;
@@ -12,11 +11,9 @@ struct Time {
     Time(int h = 0, int m = 0, int s = 0) : hour(h), minute(m), second(s) {}
 };
 
-// 1. Пустой класс для исключения
-class EmptyTimeException {};
+class EmptyTimeException {}; // класс для исключения
 
-// 2. Независимый класс с полями-параметрами функции
-class TimeExceptionWithFields {
+class TimeExceptionWithFields { //  независимый класс с полями-параметрами функции
 public:
     Time start;
     Time end;
@@ -26,8 +23,7 @@ public:
         : start(s), end(e), message(msg) {}
 };
 
-// 3. Наследник от базового исключения с полями
-class BaseTimeException {
+class BaseTimeException { // класс наследник от базового исключения с полями
 protected:
     string message;
 public:
@@ -45,21 +41,18 @@ public:
         : BaseTimeException(msg), start(s), end(e) {}
 };
 
-// Вспомогательные функции
-bool isValidTime(const Time& time) {
+bool isValidTime(const Time& time) { //функции для времени
     if (time.hour < 0 || time.hour > 23) return false;
     if (time.minute < 0 || time.minute > 59) return false;
     if (time.second < 0 || time.second > 59) return false;
     return true;
 }
 
-// Функция для преобразования времени в секунды
-int timeToSeconds(const Time& time) {
+int timeToSeconds(const Time& time) { // функция для преобразования времени в секунды
     return time.hour * 3600 + time.minute * 60 + time.second;
 }
 
-// Функция для преобразования числа в строку
-string intToString(int value) {
+string intToString(int value) { // функция для преобразования числа в строку
     if (value == 0) return "0";
     
     string result;
@@ -83,10 +76,9 @@ string intToString(int value) {
     return result;
 }
 
-// ВАРИАНТ 1: Без спецификации исключений
+//-----------------без спецификации исключений---------------------------------------
 int callDuration1(const Time& start, const Time& end) {
-    // Проверка валидности времени
-    if (!isValidTime(start)) {
+    if (!isValidTime(start)) { 
         throw string("Время начала разговора невалидно");
     }
     if (!isValidTime(end)) {
@@ -96,24 +88,22 @@ int callDuration1(const Time& start, const Time& end) {
     int startSeconds = timeToSeconds(start);
     int endSeconds = timeToSeconds(end);
     
-    // Если время окончания меньше времени начала, считаем что разговор перешел через полночь
-    if (endSeconds < startSeconds) {
-        endSeconds += 24 * 3600; // Добавляем сутки
+    if (endSeconds < startSeconds) { // если время окончания меньше времени начала, считаем что разговор перешел через полночь
+        endSeconds += 24 * 3600; // добавляем сутки
     }
     
     int durationSeconds = endSeconds - startSeconds;
     
-    // Переводим секунды в минуты, неполная минута считается за полную
-    int durationMinutes = durationSeconds / 60;
+    int durationMinutes = durationSeconds / 60; // перевод секунды в минуты
     if (durationSeconds % 60 != 0) {
-        durationMinutes++; // Неполная минута считается за полную
+        durationMinutes++; // неполная минута считается за полную
     }
     
     return durationMinutes;
 }
 
-// ВАРИАНТ 2: Со спецификацией throw() - убираем throw()
-int callDuration2(const Time& start, const Time& end) {
+//-----------------------------со спецификацией throw() - убираем throw()---------------------------------
+int callDuration2(const Time& start, const Time& end) { 
     if (!isValidTime(start)) {
         throw EmptyTimeException();
     }
@@ -125,7 +115,7 @@ int callDuration2(const Time& start, const Time& end) {
     int endSeconds = timeToSeconds(end);
     
     if (endSeconds < startSeconds) {
-        endSeconds += 24 * 3600;
+        endSeconds += 24 * 3600; // если время окончания меньше времени начала, считаем что разговор перешел через полночь
     }
     
     int durationSeconds = endSeconds - startSeconds;
@@ -137,7 +127,7 @@ int callDuration2(const Time& start, const Time& end) {
     return durationMinutes;
 }
 
-// ВАРИАНТ 3: С конкретной спецификацией - убираем throw()
+//-----------------------------с конкретной спецификацией - убираем throw()---------------------------------------------
 int callDuration3(const Time& start, const Time& end) {
     if (!isValidTime(start)) {
         throw "Время начала разговора невалидно";
@@ -150,7 +140,7 @@ int callDuration3(const Time& start, const Time& end) {
     int endSeconds = timeToSeconds(end);
     
     if (endSeconds < startSeconds) {
-        endSeconds += 24 * 3600;
+        endSeconds += 24 * 3600; // если время окончания меньше времени начала, считаем что разговор перешел через полночь
     }
     
     int durationSeconds = endSeconds - startSeconds;
@@ -162,7 +152,7 @@ int callDuration3(const Time& start, const Time& end) {
     return durationMinutes;
 }
 
-// ВАРИАНТ 4: Спецификация с собственным реализованным исключением - убираем throw()
+ //---------------------------спецификация с собственным реализованным исключением - убираем throw()-------------------------------------------
 int callDuration4(const Time& start, const Time& end) {
     if (!isValidTime(start)) {
         throw TimeExceptionStd(start, end, 
@@ -183,7 +173,7 @@ int callDuration4(const Time& start, const Time& end) {
     int endSeconds = timeToSeconds(end);
     
     if (endSeconds < startSeconds) {
-        endSeconds += 24 * 3600;
+        endSeconds += 24 * 3600; // если время окончания меньше времени начала, считаем что разговор перешел через полночь
     }
     
     int durationSeconds = endSeconds - startSeconds;
@@ -195,19 +185,17 @@ int callDuration4(const Time& start, const Time& end) {
     return durationMinutes;
 }
 
-// Демонстрация работы всех вариантов
 int main() {
-    cout << "=== ВАРИАНТ 13: Вычисление продолжительности телефонного разговора в минутах ===" << endl;
     cout << "=== Демонстрация четырех вариантов обработки исключений ===" << endl;
     
     // Тестовые данные
     Time validStart1(10, 30, 15);
     Time validEnd1(10, 45, 30);
     Time validStart2(23, 55, 0);
-    Time validEnd2(0, 5, 0);    // Разговор через полночь
-    Time invalidTime1(25, 30, 0);  // Невалидное время (часы > 23)
-    Time invalidTime2(10, 70, 0);  // Невалидное время (минуты > 59)
-    Time invalidTime3(10, 30, 70); // Невалидное время (секунды > 59)
+    Time validEnd2(0, 5, 0);    // разговор через полночь
+    Time invalidTime1(25, 30, 0);  // невалидное время (часы > 23)
+    Time invalidTime2(10, 70, 0);  // невалидное время (минуты > 59)
+    Time invalidTime3(10, 30, 70); // невалидное время (секунды > 59)
     
     cout << "\nТестовые времена:" << endl;
     cout << "Валидное начало 1: " << validStart1.hour << ":" << validStart1.minute << ":" << validStart1.second << endl;
@@ -217,8 +205,7 @@ int main() {
     cout << "Невалидное время 1: " << invalidTime1.hour << ":" << invalidTime1.minute << ":" << invalidTime1.second << endl;
     cout << "Невалидное время 2: " << invalidTime2.hour << ":" << invalidTime2.minute << ":" << invalidTime2.second << endl;
     
-    // ТЕСТ 1: Без спецификации исключений
-    cout << "\n--- ТЕСТ 1: Без спецификации исключений ---" << endl;
+    cout << "\n--- ТЕСТ 1: Без спецификации исключений ---" << endl;     // без спецификации исключений
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration1(validStart1, validEnd1);
@@ -235,8 +222,7 @@ int main() {
         cout << "Поймано неизвестное исключение" << endl;
     }
     
-    // ТЕСТ 2: Со спецификацией throw() - теперь без throw в сигнатуре
-    cout << "\n--- ТЕСТ 2: Использование пустого класса исключения ---" << endl;
+    cout << "\n--- ТЕСТ 2: Использование пустого класса исключения ---" << endl;// со спецификацией throw() - теперь без throw в сигнатуре
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration2(validStart1, validEnd1);
@@ -253,8 +239,7 @@ int main() {
         cout << "Поймано другое исключение" << endl;
     }
     
-    // ТЕСТ 3: С конкретной спецификацией - теперь без throw в сигнатуре
-    cout << "\n--- ТЕСТ 3: Использование исключения const char* ---" << endl;
+    cout << "\n--- ТЕСТ 3: Использование исключения const char* ---" << endl; //с конкретной спецификацией - теперь без throw в сигнатуре
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration3(validStart1, validEnd1);
@@ -271,8 +256,7 @@ int main() {
         cout << "Поймано другое исключение" << endl;
     }
     
-    // ТЕСТ 4: С собственным исключением - теперь без throw в сигнатуре
-    cout << "\n--- ТЕСТ 4: Использование собственного класса исключения ---" << endl;
+    cout << "\n--- ТЕСТ 4: Использование собственного класса исключения ---" << endl; //с собственным исключением - теперь без throw в сигнатуре
     try {
         cout << "Попытка вычисления с валидными временами..." << endl;
         int duration1 = callDuration4(validStart1, validEnd1);
@@ -291,8 +275,7 @@ int main() {
         cout << "Поймано другое исключение" << endl;
     }
     
-    // ТЕСТ 5: Демонстрация работы с независимым классом исключения
-    cout << "\n--- ТЕСТ 5: Независимый класс исключения ---" << endl;
+    cout << "\n--- ТЕСТ 5: Независимый класс исключения ---" << endl; // демонстрация работы с независимым классом исключения
     try {
         cout << "Проверка валидности времени..." << endl;
         if (!isValidTime(invalidTime1)) {
@@ -306,14 +289,13 @@ int main() {
         cout << "Окончание: " << e.end.hour << ":" << e.end.minute << ":" << e.end.second << endl;
     }
     
-    // ТЕСТ 6: Демонстрация корректных вычислений с разными сценариями
-    cout << "\n--- ТЕСТ 6: Корректные вычисления ---" << endl;
+    cout << "\n--- ТЕСТ 6: Корректные вычисления ---" << endl;  //демонстрация корректных вычислений с разными сценариями
     
     Time testCases[][2] = {
-        {Time(10, 0, 0), Time(10, 15, 0)},     // Ровно 15 минут
+        {Time(10, 0, 0), Time(10, 15, 0)},     // 15 минут
         {Time(10, 0, 0), Time(10, 15, 30)},    // 15 минут 30 секунд -> 16 минут
         {Time(10, 0, 0), Time(10, 0, 45)},     // 45 секунд -> 1 минута
-        {Time(23, 55, 0), Time(0, 5, 0)},      // Через полночь
+        {Time(23, 55, 0), Time(0, 5, 0)},      // через полночь
         {Time(10, 30, 0), Time(10, 30, 1)}     // 1 секунда -> 1 минута
     };
     
@@ -337,14 +319,13 @@ int main() {
         }
     }
     
-    // ТЕСТ 7: Демонстрация обработки граничных случаев
-    cout << "\n--- ТЕСТ 7: Граничные случаи ---" << endl;
+    cout << "\n--- ТЕСТ 7: Граничные случаи ---" << endl; //демонстрация обработки граничных случаев
     
     Time edgeCases[][2] = {
         {Time(0, 0, 0), Time(0, 0, 59)},   // 59 секунд -> 1 минута
-        {Time(0, 0, 0), Time(0, 1, 0)},    // Ровно 1 минута
-        {Time(23, 59, 0), Time(0, 1, 0)},  // Через полночь (2 минуты)
-        {Time(0, 0, 0), Time(23, 59, 59)}  // Почти полные сутки
+        {Time(0, 0, 0), Time(0, 1, 0)},    // 1 минута
+        {Time(23, 59, 0), Time(0, 1, 0)},  // через полночь (2 минуты)
+        {Time(0, 0, 0), Time(23, 59, 59)}  // почти полные сутки
     };
     
     string edgeDescriptions[] = {
@@ -363,9 +344,8 @@ int main() {
             cout << "Ошибка при вычислении для " << edgeDescriptions[i] << endl;
         }
     }
-
-    // ТЕСТ 8: Демонстрация всех вариантов функций
-    cout << "\n--- ТЕСТ 8: Сравнение всех четырех вариантов ---" << endl;
+    
+    cout << "\n--- ТЕСТ 8: Сравнение всех четырех вариантов ---" << endl; // демонстрация всех вариантов функций
     Time testStart(14, 20, 0);
     Time testEnd(14, 35, 45);
     
