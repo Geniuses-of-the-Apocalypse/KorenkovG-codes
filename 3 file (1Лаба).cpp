@@ -31,6 +31,10 @@ public:
     void print() const;
     
     void input();
+
+    // Операторы ввода-вывода
+    friend ostream& operator<<(ostream& os, const Triad& triad);
+    friend istream& operator>>(istream& is, Triad& triad);
 };
 
 // -------------------------------методы класса Triad--------------------------------
@@ -86,11 +90,23 @@ void Triad::print() const {
 
 void Triad::input() {
     cout << "Введите три числа (через пробел): ";
+    cin >> *this;  // Используем оператор ввода
+}
+
+// Оператор вывода для Triad
+ostream& operator<<(ostream& os, const Triad& triad) {
+    os << "(" << triad.f << ", " << triad.s << ", " << triad.t << ")";
+    return os;
+}
+
+// Оператор ввода для Triad
+istream& operator>>(istream& is, Triad& triad) {
     int a, b, c;
-    cin >> a >> b >> c;
-    setF(a);
-    setS(b);
-    setT(c);
+    is >> a >> b >> c;
+    triad.setF(a);
+    triad.setS(b);
+    triad.setT(c);
+    return is;
 }
 
 //-------------------------- класс Date -----------------------
@@ -123,6 +139,10 @@ public:
     int getY() const;
     int getM() const;
     int getD() const;
+
+    // Операторы ввода-вывода
+    friend ostream& operator<<(ostream& os, const Date& date);
+    friend istream& operator>>(istream& is, Date& date);
 };
 
 bool Date::isLeap(int y) const { // проверка на високосный год
@@ -238,19 +258,31 @@ string Date::toString() const {
 }
 
 void Date::print() const {
-    cout << "Дата: " << toString() << endl;
+    cout << *this << endl;  // Используем оператор вывода
 }
 
 void Date::input() {
     cout << "Введите дату (год месяц день через пробел): ";
-    int y, m, d;
-    cin >> y >> m >> d;
-    setDate(y, m, d);
+    cin >> *this;  // Используем оператор ввода
 }
 
 int Date::getY() const { return f; }
 int Date::getM() const { return s; }
 int Date::getD() const { return t; }
+
+// Оператор вывода для Date
+ostream& operator<<(ostream& os, const Date& date) {
+    os << "Дата: " << date.t << "." << date.s << "." << date.f;
+    return os;
+}
+
+// Оператор ввода для Date
+istream& operator>>(istream& is, Date& date) {
+    int y, m, d;
+    is >> y >> m >> d;
+    date.setDate(y, m, d);
+    return is;
+}
 
 void demoSub(Triad& t) {
     cout << "Принцип подстановки: " << t.toString() << endl;
@@ -285,8 +317,7 @@ int main() {
                 triadObj = new Triad();
                 cout << "Введите данные для Triad:" << endl;
                 triadObj->input();
-                cout << "Triad создан: ";
-                triadObj->print();
+                cout << "Triad создан: " << *triadObj << endl;  // Используем оператор вывода
                 break;
             }
             
@@ -297,23 +328,20 @@ int main() {
                 dateObj = new Date();
                 cout << "Введите данные для Date:" << endl;
                 dateObj->input();
-                cout << "Date создана: ";
-                dateObj->print();
+                cout << "Date создана: " << *dateObj << endl;  // Используем оператор вывода
                 break;
             }
             
             case 3: {
                 cout << "\n--- Все объекты ---" << endl;
                 if (triadObj != nullptr) {
-                    cout << "Triad: ";
-                    triadObj->print();
+                    cout << "Triad: " << *triadObj << endl;  // Используем оператор вывода
                 } else {
                     cout << "Triad: не создан" << endl;
                 }
                 
                 if (dateObj != nullptr) {
-                    cout << "Date: ";
-                    dateObj->print();
+                    cout << "Date: " << *dateObj << endl;  // Используем оператор вывода
                 } else {
                     cout << "Date: не создана" << endl;
                 }
@@ -323,23 +351,21 @@ int main() {
             case 4: {
                 if (triadObj != nullptr) {
                     cout << "\n--- Демонстрация Triad ---" << endl;
-                    cout << "Текущий объект: ";
-                    triadObj->print();
+                    cout << "Текущий объект: " << *triadObj << endl;  // Используем оператор вывода
                     
                     cout << "Увеличиваем все поля на 1..." << endl;
                     triadObj->incF();
                     triadObj->incS();
                     triadObj->incT();
-                    cout << "После увеличения: ";
-                    triadObj->print();
+                    cout << "После увеличения: " << *triadObj << endl;  // Используем оператор вывода
                     
                     cout << "Хотите изменить значения? (1-да, 0-нет): ";
                     int change;
                     cin >> change;
                     if (change == 1) {
-                        triadObj->input();
-                        cout << "После изменения: ";
-                        triadObj->print();
+                        cout << "Введите новые значения для Triad: ";
+                        cin >> *triadObj;  // Используем оператор ввода
+                        cout << "После изменения: " << *triadObj << endl;  // Используем оператор вывода
                     }
                 } else {
                     cout << "Сначала создайте Triad!" << endl;
@@ -350,8 +376,7 @@ int main() {
             case 5: {
                 if (dateObj != nullptr) {
                     cout << "\n--- Демонстрация Date ---" << endl;
-                    cout << "Текущая дата: ";
-                    dateObj->print();
+                    cout << "Текущая дата: " << *dateObj << endl;  // Используем оператор вывода
                     
                     cout << "1. Увеличить год" << endl;
                     cout << "2. Увеличить месяц" << endl;
@@ -364,26 +389,22 @@ int main() {
                     switch(dateChoice) {
                         case 1:
                             dateObj->incF();
-                            cout << "После увеличения года: ";
-                            dateObj->print();
+                            cout << "После увеличения года: " << *dateObj << endl;  // Используем оператор вывода
                             break;
                         case 2:
                             dateObj->incS();
-                            cout << "После увеличения месяца: ";
-                            dateObj->print();
+                            cout << "После увеличения месяца: " << *dateObj << endl;  // Используем оператор вывода
                             break;
                         case 3:
                             dateObj->incT();
-                            cout << "После увеличения дня: ";
-                            dateObj->print();
+                            cout << "После увеличения дня: " << *dateObj << endl;  // Используем оператор вывода
                             break;
                         case 4:
                             cout << "Введите количество дней для добавления: ";
                             int days;
                             cin >> days;
                             dateObj->addDays(days);
-                            cout << "После добавления " << days << " дней: ";
-                            dateObj->print();
+                            cout << "После добавления " << days << " дней: " << *dateObj << endl;  // Используем оператор вывода
                             break;
                         default:
                             cout << "Неверный выбор!" << endl;
