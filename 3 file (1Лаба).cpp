@@ -316,7 +316,7 @@ int main() {
                 triadObj = new Triad();
                 cout << "Введите данные для Triad:" << endl;
                 triadObj->input();
-                cout << "Triad создан: " << *triadObj << endl;  // Используем оператор вывода
+                cout << "Triad создан: " << *triadObj << endl;  // используем оператор вывода
                 break;
             }
             
@@ -327,20 +327,20 @@ int main() {
                 dateObj = new Date();
                 cout << "Введите данные для Date:" << endl;
                 dateObj->input();
-                cout << "Date создана: " << *dateObj << endl;  // Используем оператор вывода
+                cout << "Date создана: " << *dateObj << endl;  // используем оператор вывода
                 break;
             }
             
             case 3: {
                 cout << "\n--- Все объекты ---" << endl;
                 if (triadObj != nullptr) {
-                    cout << "Triad: " << *triadObj << endl;  // Используем оператор вывода
+                    cout << "Triad: " << *triadObj << endl;  // используем оператор вывода
                 } else {
                     cout << "Triad: не создан" << endl;
                 }
                 
                 if (dateObj != nullptr) {
-                    cout << "Date: " << *dateObj << endl;  // Используем оператор вывода
+                    cout << "Date: " << *dateObj << endl;  // используем оператор вывода
                 } else {
                     cout << "Date: не создана" << endl;
                 }
@@ -350,21 +350,21 @@ int main() {
             case 4: {
                 if (triadObj != nullptr) {
                     cout << "\n--- Демонстрация Triad ---" << endl;
-                    cout << "Текущий объект: " << *triadObj << endl;  // Используем оператор вывода
+                    cout << "Текущий объект: " << *triadObj << endl;  // используем оператор вывода
                     
                     cout << "Увеличиваем все поля на 1..." << endl;
                     triadObj->incF();
                     triadObj->incS();
                     triadObj->incT();
-                    cout << "После увеличения: " << *triadObj << endl;  // Используем оператор вывода
+                    cout << "После увеличения: " << *triadObj << endl;  // используем оператор вывода
                     
                     cout << "Хотите изменить значения? (1-да, 0-нет): ";
                     int change;
                     cin >> change;
                     if (change == 1) {
                         cout << "Введите новые значения для Triad: ";
-                        cin >> *triadObj;  // Используем оператор ввода
-                        cout << "После изменения: " << *triadObj << endl;  // Используем оператор вывода
+                        cin >> *triadObj;  // используем оператор ввода
+                        cout << "После изменения: " << *triadObj << endl;  // ииспользуем оператор вывода
                     }
                 } else {
                     cout << "Сначала создайте Triad!" << endl;
@@ -375,7 +375,7 @@ int main() {
             case 5: {
                 if (dateObj != nullptr) {
                     cout << "\n--- Демонстрация Date ---" << endl;
-                    cout << "Текущая дата: " << *dateObj << endl;  // Используем оператор вывода
+                    cout << "Текущая дата: " << *dateObj << endl;  // используем оператор вывода
                     
                     cout << "1. Увеличить год" << endl;
                     cout << "2. Увеличить месяц" << endl;
@@ -388,22 +388,22 @@ int main() {
                     switch(dateChoice) {
                         case 1:
                             dateObj->incF();
-                            cout << "После увеличения года: " << *dateObj << endl;  // Используем оператор вывода
+                            cout << "После увеличения года: " << *dateObj << endl;  // используем оператор вывода
                             break;
                         case 2:
                             dateObj->incS();
-                            cout << "После увеличения месяца: " << *dateObj << endl;  // Используем оператор вывода
+                            cout << "После увеличения месяца: " << *dateObj << endl;  // используем оператор вывода
                             break;
                         case 3:
                             dateObj->incT();
-                            cout << "После увеличения дня: " << *dateObj << endl;  // Используем оператор вывода
+                            cout << "После увеличения дня: " << *dateObj << endl;  // используем оператор вывода
                             break;
                         case 4:
                             cout << "Введите количество дней для добавления: ";
                             int days;
                             cin >> days;
                             dateObj->addDays(days);
-                            cout << "После добавления " << days << " дней: " << *dateObj << endl;  // Используем оператор вывода
+                            cout << "После добавления " << days << " дней: " << *dateObj << endl;  // используем оператор вывода
                             break;
                         default:
                             cout << "Неверный выбор!" << endl;
