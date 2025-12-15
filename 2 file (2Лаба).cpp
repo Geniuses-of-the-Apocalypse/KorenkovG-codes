@@ -35,12 +35,11 @@ public:
     bool operator>(const Money& other) const;   // больше
     bool operator<(const Money& other) const;   // меньше
 
-    void init(double amt);
-    void read();
-    void display() const;
     string toString() const;
-
-    friend ostream& operator<<(ostream& os, const Money& money); // друг
+    
+    // Операторы ввода-вывода
+    friend ostream& operator<<(ostream& os, const Money& money);
+    friend istream& operator>>(istream& is, Money& money);
 };
 
 Money::Money() : total(0) {
@@ -97,41 +96,6 @@ void Money::normalize(double amt) { // нормализация суммы по 
     }
 }
 
-void Money::init(double amt) {
-    normalize(amt);
-}
-
-void Money::read() {
-    double amt;
-    cout << "Введите сумму: ";
-    cin >> amt;
-    normalize(amt);
-}
-
-void Money::display() const {
-    cout << "Сумма: " << total << " руб." << endl;
-    cout << "Состав:" << endl;
-    cout << "Рубли: ";
-    bool has_r = false;
-    for (int i = 0; i < R_COUNT; i++) {
-        if (r_cnt[i] > 0) {
-            cout << r_nom[i] << " руб.: " << r_cnt[i] << " шт.; ";
-            has_r = true;
-        }
-    }
-    if (!has_r) cout << "нет";
-    cout << endl;
-    cout << "Копейки: ";
-    bool has_k = false;
-    for (int i = 0; i < K_COUNT; i++) {
-        if (k_cnt[i] > 0) {
-            cout << k_nom[i] << " коп.: " << k_cnt[i] << " шт.; ";
-            has_k = true;
-        }
-    }
-    if (!has_k) cout << "нет";
-    cout << endl;
-}
 string Money::toString() const {
     string str = to_string(total);
     return str.substr(0, str.find('.') + 3) + " руб.";
@@ -194,9 +158,19 @@ bool Money::operator<(const Money& other) const {
     return this->total < other.total;
 }
 
-ostream& operator<<(ostream& os, const Money& money) { // дружественная функция для вывода
+// Оператор вывода
+ostream& operator<<(ostream& os, const Money& money) {
     os << money.toString();
     return os;
+}
+
+// Оператор ввода
+istream& operator>>(istream& is, Money& money) {
+    double amt;
+    cout << "Введите сумму: ";
+    is >> amt;
+    money.normalize(amt);
+    return is;
 }
 
 int main() {
@@ -250,6 +224,11 @@ int main() {
     
     Money complex = (test1 + test2) * 2 - Money(5.00); // комбинированные операции показывающие плюсы перегрузки
     cout << "(10.10 + 5.05) * 2 - 5.00 = " << complex << endl;
+    
+    cout << "\n6. Тестирование оператора ввода:" << endl; // пример использования оператора ввода
+    Money inputMoney;
+    cin >> inputMoney;
+    cout << "Вы ввели: " << inputMoney << endl;
 
     return 0;
 }
