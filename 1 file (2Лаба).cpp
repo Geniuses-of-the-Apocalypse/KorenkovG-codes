@@ -7,35 +7,35 @@ using namespace std;
 // ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ СТРУКТУРУ И ВНЕШНИЕ ФУНКЦИИ =================================================================
 
 struct MoneyStruct {
-    static const int R_COUNT = 9;  // кол-во рублей
-    static const int K_COUNT = 4;  // кол-во  копеек
+    static const int R_COUNT = 9;  // кол-во номиналов рублей 
+    static const int K_COUNT = 4;  // кол-во номиналов копеек 
     
-    int r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
-    int r_cnt[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};     // номиналы рублей 
+    int r_cnt[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};   // кол-во каждого номинала
     
-    double k_nom[4] = {0.5, 0.1, 0.05, 0.01};
-    int k_cnt[4] = {0, 0, 0, 0};
+    double k_nom[4] = {0.5, 0.1, 0.05, 0.01};  // номиналы копеек 
+    int k_cnt[4] = {0, 0, 0, 0};   // кол-во монет каждого номинала
     
-    double total;
+    double total;  // общая сумма в рублях
 };
 
 void init(MoneyStruct& m, double amt) {
-    m.total = amt;
+    m.total = amt;  // сохраняем общую сумму
     
-    for (int i = 0; i < MoneyStruct::R_COUNT; i++) m.r_cnt[i] = 0;   // обнуляем счетчики
-    for (int i = 0; i < MoneyStruct::K_COUNT; i++) m.k_cnt[i] = 0;
+    for (int i = 0; i < MoneyStruct::R_COUNT; i++) m.r_cnt[i] = 0;   // обнуляем счетчики рублей
+    for (int i = 0; i < MoneyStruct::K_COUNT; i++) m.k_cnt[i] = 0;   // обнуляем счетчики копеек
     
     int rub = (int)amt; // распределяем рубли
     for (int i = 0; i < MoneyStruct::R_COUNT; i++) {
-        m.r_cnt[i] = rub / m.r_nom[i];
-        rub %= m.r_nom[i];
+        m.r_cnt[i] = rub / m.r_nom[i];   // сколько купюр этого номинала
+        rub %= m.r_nom[i];  // остаток для более мелких купюр
     }
     
-    int kop = (int)((amt - (int)amt) * 100 + 0.5); // распределяем копейки
+    int kop = (int)((amt - (int)amt) * 100 + 0.5); // распределяем копейки (+0.5 для округления)
     for (int i = 0; i < MoneyStruct::K_COUNT; i++) {
-        int k_val = (int)(m.k_nom[i] * 100);
-        m.k_cnt[i] = kop / k_val;
-        kop %= k_val;
+        int k_val = (int)(m.k_nom[i] * 100);    // переводим в копейки
+        m.k_cnt[i] = kop / k_val;     // сколько монет этого номинала
+        kop %= k_val;    // остаток для более мелких монет
     }
 }
 
@@ -43,7 +43,7 @@ void read(MoneyStruct& m) {
     double amt;
     cout << "Введите сумму: ";
     cin >> amt;
-    init(m, amt);
+    init(m, amt); 
 }
 
 void display(const MoneyStruct& m) {
@@ -51,36 +51,36 @@ void display(const MoneyStruct& m) {
     cout << "Состав:" << endl;
     
     cout << "Рубли: ";
-    bool has_r = false;
+    bool has_r = false;   // флаг, есть ли рубли
     for (int i = 0; i < MoneyStruct::R_COUNT; i++) {
         if (m.r_cnt[i] > 0) {
             cout << m.r_nom[i] << " руб.: " << m.r_cnt[i] << " шт.; ";
-            has_r = true;
+            has_r = true;  // нашли хотя бы одну купюру
         }
     }
-    if (!has_r) cout << "нет"; // нет вообще
+    if (!has_r) cout << "нет"; // нет вообще рублей
     cout << endl;
     
     cout << "Копейки: ";
-    bool has_k = false;
+    bool has_k = false;   // флаг, есть ли копейки
     for (int i = 0; i < MoneyStruct::K_COUNT; i++) {
         if (m.k_cnt[i] > 0) {
             cout << m.k_nom[i] << " коп.: " << m.k_cnt[i] << " шт.; ";
-            has_k = true;
+            has_k = true;   // нашли хотя бы одну монету
         }
     }
-    if (!has_k) cout << "нет"; // нет вообще
+    if (!has_k) cout << "нет"; // нет вообще копеек
     cout << endl;
 }
 
-string toString(const MoneyStruct& m) { // функция преобразования суммы в строку
+string toString(const MoneyStruct& m) { // функция преобразования суммы в строку (с точностью до копеек)
     return to_string(m.total).substr(0, to_string(m.total).find('.') + 3) + " руб.";
 }
 
 //                            -арифметические операции-
 MoneyStruct add(const MoneyStruct& a, const MoneyStruct& b) {
     MoneyStruct res;
-    init(res, a.total + b.total);
+    init(res, a.total + b.total); // создаем новую сумму как сумму двух
     return res;
 }
 
@@ -89,7 +89,7 @@ MoneyStruct sub(const MoneyStruct& a, const MoneyStruct& b) {
         throw "Ошибка: отрицательная сумма!";
     }
     MoneyStruct res;
-    init(res, a.total - b.total);
+    init(res, a.total - b.total);  // создаем новую сумму как разность
     return res;
 }
 
@@ -97,7 +97,7 @@ double div(const MoneyStruct& a, const MoneyStruct& b) {
     if (b.total == 0) {
         throw "Ошибка: деление на ноль!";
     }
-    return a.total / b.total;
+    return a.total / b.total;  // возвращаем отношение сумм
 }
 
 MoneyStruct divByNum(const MoneyStruct& m, double num) {
@@ -105,84 +105,84 @@ MoneyStruct divByNum(const MoneyStruct& m, double num) {
         throw "Ошибка: деление на ноль!";
     }
     MoneyStruct res;
-    init(res, m.total / num);
+    init(res, m.total / num);  // делим сумму на число
     return res;
 }
 
 MoneyStruct mulByNum(const MoneyStruct& m, double num) {
     MoneyStruct res;
-    init(res, m.total * num);
+    init(res, m.total * num);  // умножаем сумму на число
     return res;
 }
 
 //                                -операции сравнения-
 bool eq(const MoneyStruct& a, const MoneyStruct& b) {
-    return fabs(a.total - b.total) < 0.001;
+    return fabs(a.total - b.total) < 0.001;   // сравнение с учетом погрешности double
 }
 
 bool neq(const MoneyStruct& a, const MoneyStruct& b) {
-    return !eq(a, b);
+    return !eq(a, b);   // обратное равенству
 }
 
 bool gt(const MoneyStruct& a, const MoneyStruct& b) {
-    return a.total > b.total;
+    return a.total > b.total;  // строго больше
 }
 
 bool lt(const MoneyStruct& a, const MoneyStruct& b) {
-    return a.total < b.total;
+    return a.total < b.total;  // строго меньше
 }
 // ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ КЛАСС С ЗАКРЫТЫМИ ПОЛЯМИ =====================================================================================
 
 class MoneyClass {
 private:
-    static const int R_COUNT = 9;
-    static const int K_COUNT = 4;
+    static const int R_COUNT = 9;         // кол-во номиналов рублей
+    static const int K_COUNT = 4;       // кол-во номиналов копеек
     
-    int r_nom[9];
-    int r_cnt[9];
+    int r_nom[9];    // номиналы рублей
+    int r_cnt[9];      // кол-во купюр каждого номинала
     
-    double k_nom[4];
-    int k_cnt[4];
+    double k_nom[4];   // номиналы копеек
+    int k_cnt[4];  // кол-во монет каждого номинала
     
-    double total;
+    double total;    // общая сумма в рублях
     
-    void normalize(double amt);
+    void normalize(double amt);   // закрытый метод для распределения суммы
 
 public:
-    MoneyClass();
-    MoneyClass(double amt);
-    MoneyClass(const MoneyClass& other);
+    MoneyClass();     // конструктор по умолчанию
+    MoneyClass(double amt);   // конструктор с параметром (сумма)
+    MoneyClass(const MoneyClass& other);  // конструктор копирования
     
-    void init(double amt);
-    void read();
-    void display() const;
-    string toString() const; 
+    void init(double amt);   // инициализация суммой
+    void read();    // ввод суммы с клавиатуры
+    void display() const;   // вывод на экран
+    string toString() const;    // преобразование в строку
     
-    MoneyClass add(const MoneyClass& other) const;
-    MoneyClass sub(const MoneyClass& other) const;
-    double div(const MoneyClass& other) const;
-    MoneyClass divByNum(double num) const;
-    MoneyClass mulByNum(double num) const;
+    MoneyClass add(const MoneyClass& other) const;   // сложение двух сумм
+    MoneyClass sub(const MoneyClass& other) const;   // вычитание сумм
+    double div(const MoneyClass& other) const;   // деление суммы на сумму
+    MoneyClass divByNum(double num) const;    // деление суммы на число
+    MoneyClass mulByNum(double num) const;    // умножение суммы на число
     
-    bool eq(const MoneyClass& other) const;
-    bool neq(const MoneyClass& other) const;
-    bool gt(const MoneyClass& other) const;
-    bool lt(const MoneyClass& other) const;
+    bool eq(const MoneyClass& other) const;     // проверка равенства
+    bool neq(const MoneyClass& other) const;   // проверка неравенства
+    bool gt(const MoneyClass& other) const;   // проверка "больше"
+    bool lt(const MoneyClass& other) const; // проверка "меньше"
     
-    double getTotal() const;
+    double getTotal() const;           // геттер для общей суммы
 };
 
 MoneyClass::MoneyClass() : total(0) {
-    int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
-    double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
+    int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};  // стандартные номиналы рублей
+    double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};    // стандартные номиналы копеек
     
     for (int i = 0; i < R_COUNT; i++) {
-        r_nom[i] = temp_r_nom[i];
-        r_cnt[i] = 0;
+        r_nom[i] = temp_r_nom[i];   // копируем номиналы рублей
+        r_cnt[i] = 0;     // обнуляем счетчики
     }
     for (int i = 0; i < K_COUNT; i++) {
-        k_nom[i] = temp_k_nom[i];
-        k_cnt[i] = 0;
+        k_nom[i] = temp_k_nom[i];    // копируем номиналы копеек
+        k_cnt[i] = 0;        // обнуляем счетчики
     }
 }
 
@@ -191,56 +191,56 @@ MoneyClass::MoneyClass(double amt) {
     double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
     
     for (int i = 0; i < R_COUNT; i++) {
-        r_nom[i] = temp_r_nom[i];
+        r_nom[i] = temp_r_nom[i];    // инициализируем номиналы рублей
     }
     for (int i = 0; i < K_COUNT; i++) {
-        k_nom[i] = temp_k_nom[i];
+        k_nom[i] = temp_k_nom[i];      // инициализируем номиналы копеек
     }
     
-    normalize(amt);
+    normalize(amt);          // распределяем сумму по номиналам
 }
 
 MoneyClass::MoneyClass(const MoneyClass& other) : total(other.total) {
     for (int i = 0; i < R_COUNT; i++) {
-        r_nom[i] = other.r_nom[i];
-        r_cnt[i] = other.r_cnt[i];
+        r_nom[i] = other.r_nom[i];    // копируем номиналы рублей
+        r_cnt[i] = other.r_cnt[i];   // копируем счетчики рублей
     }
     for (int i = 0; i < K_COUNT; i++) {
-        k_nom[i] = other.k_nom[i];
-        k_cnt[i] = other.k_cnt[i];
+        k_nom[i] = other.k_nom[i];   // копируем номиналы копеек
+        k_cnt[i] = other.k_cnt[i];   // копируем счетчики копеек
     }
 }
 
-//                           -закрытый метод нормализации-
+//                           -закрытый метод нормализации (распределяет сумму по номиналам)-
 void MoneyClass::normalize(double amt) {
-    total = amt;
+    total = amt;        // сохраняем общую сумму
     
-    for (int i = 0; i < R_COUNT; i++) r_cnt[i] = 0;
-    for (int i = 0; i < K_COUNT; i++) k_cnt[i] = 0;
+    for (int i = 0; i < R_COUNT; i++) r_cnt[i] = 0;  // обнуляем счетчики рублей
+    for (int i = 0; i < K_COUNT; i++) k_cnt[i] = 0;  // обнуляем счетчики копеек
     
-    int rub = (int)amt;
+    int rub = (int)amt; // целая часть - рубли
     for (int i = 0; i < R_COUNT; i++) {
-        r_cnt[i] = rub / r_nom[i];
-        rub %= r_nom[i];
+        r_cnt[i] = rub / r_nom[i];     // сколько купюр этого номинала
+        rub %= r_nom[i];      // остаток для более мелких
     }
     
-    int kop = (int)((amt - (int)amt) * 100 + 0.5);
+    int kop = (int)((amt - (int)amt) * 100 + 0.5);    // дробная часть - копейки
     for (int i = 0; i < K_COUNT; i++) {
-        int k_val = (int)(k_nom[i] * 100);
-        k_cnt[i] = kop / k_val;
-        kop %= k_val;
+        int k_val = (int)(k_nom[i] * 100);    // переводим номинал в копейки
+        k_cnt[i] = kop / k_val;    // сколько монет этого номинала
+        kop %= k_val;   // остаток для более мелких
     }
 }
 
-void MoneyClass::init(double amt) { // паблик
-    normalize(amt);
+void MoneyClass::init(double amt) { // публичный метод инициализации
+    normalize(amt);     // используем закрытый normalize
 }
 
 void MoneyClass::read() {
     double amt;
     cout << "Введите сумму: ";
     cin >> amt;
-    normalize(amt);
+    normalize(amt); // используем normalize для распределения
 }
 
 void MoneyClass::display() const {
@@ -248,30 +248,30 @@ void MoneyClass::display() const {
     cout << "Состав:" << endl;
     
     cout << "Рубли: ";
-    bool has_r = false;
+    bool has_r = false; // флаг наличия рублей
     for (int i = 0; i < R_COUNT; i++) {
         if (r_cnt[i] > 0) {
             cout << r_nom[i] << " руб.: " << r_cnt[i] << " шт.; ";
             has_r = true;
         }
     }
-    if (!has_r) cout << "нет";
+    if (!has_r) cout << "нет"; // нет рублей
     cout << endl;
     
     cout << "Копейки: ";
-    bool has_k = false;
+    bool has_k = false;   // флаг наличия копеек
     for (int i = 0; i < K_COUNT; i++) {
         if (k_cnt[i] > 0) {
             cout << k_nom[i] << " коп.: " << k_cnt[i] << " шт.; ";
             has_k = true;
         }
     }
-    if (!has_k) cout << "нет";
+    if (!has_k) cout << "нет";// нет копеек
     cout << endl;
 }
 
 
-string MoneyClass::toString() const { // метод преобразования в строку 
+string MoneyClass::toString() const { // метод преобразования в строку с точностью до копеек
     string str = to_string(total);
     return str.substr(0, str.find('.') + 3) + " руб.";
 }
@@ -279,7 +279,7 @@ string MoneyClass::toString() const { // метод преобразования
 //                                   -арифметические операции-
 MoneyClass MoneyClass::add(const MoneyClass& other) const {
     MoneyClass res;
-    res.normalize(this->total + other.total);
+    res.normalize(this->total + other.total);        // сумма текущего объекта и other
     return res;
 }
 
@@ -288,7 +288,7 @@ MoneyClass MoneyClass::sub(const MoneyClass& other) const {
         throw "Ошибка: отрицательная сумма!";
     }
     MoneyClass res;
-    res.normalize(this->total - other.total);
+    res.normalize(this->total - other.total);       // разность текущего объекта и other
     return res;
 }
 
@@ -296,7 +296,7 @@ double MoneyClass::div(const MoneyClass& other) const {
     if (other.total == 0) {
         throw "Ошибка: деление на ноль!";
     }
-    return this->total / other.total;
+    return this->total / other.total;             // отношение текущего объекта к other
 }
 
 MoneyClass MoneyClass::divByNum(double num) const {
@@ -304,31 +304,31 @@ MoneyClass MoneyClass::divByNum(double num) const {
         throw "Ошибка: деление на ноль!";
     }
     MoneyClass res;
-    res.normalize(this->total / num);
+    res.normalize(this->total / num);            // деление текущей суммы на число
     return res;
 }
 
 MoneyClass MoneyClass::mulByNum(double num) const {
     MoneyClass res;
-    res.normalize(this->total * num);
+    res.normalize(this->total * num);          // умножение текущей суммы на число
     return res;
 }
 
 //                                -операции сравнения-
 bool MoneyClass::eq(const MoneyClass& other) const {
-    return fabs(this->total - other.total) < 0.001;
+    return fabs(this->total - other.total) < 0.001; // равенство с учетом погрешности
 }
 
 bool MoneyClass::neq(const MoneyClass& other) const {
-    return !eq(other);
+    return !eq(other);                              // неравенство как обратное равенству
 }
 
 bool MoneyClass::gt(const MoneyClass& other) const {
-    return this->total > other.total;
+    return this->total > other.total;                // текущая сумма больше other
 }
 
 bool MoneyClass::lt(const MoneyClass& other) const {
-    return this->total < other.total;
+    return this->total < other.total;              // текущая сумма меньше other
 }
 // ===== ДЕМОНСТРАЦИЯ =====
 
