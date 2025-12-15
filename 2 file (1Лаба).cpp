@@ -41,65 +41,66 @@ public:
     bool lt(const Money& other) const;
 };
 
-
+// конструктор по умолчанию: создает объект с нулевой суммой
 Money::Money() : total(0) { // инициализация номинало
 
-    int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
-    double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
+    int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1}; // инициализация номиналов рублей
+    double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01}; // инициализация номиналов копеек
     for (int i = 0; i < R_COUNT; i++) {
-        r_nom[i] = temp_r_nom[i];
-        r_cnt[i] = 0;
+        r_nom[i] = temp_r_nom[i]; // устанавливаем номинал 
+        r_cnt[i] = 0; // обнуляем количество этого номинала
     }
     for (int i = 0; i < K_COUNT; i++) {
-        k_nom[i] = temp_k_nom[i];
-        k_cnt[i] = 0;
+        k_nom[i] = temp_k_nom[i]; // устанавливаем номинал 
+        k_cnt[i] = 0; // обнуляем количество этого номинала
     }
 }
 
 Money::Money(double amt) { // конструктор инициализации 
-    int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1};
-    double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01};
+    int temp_r_nom[9] = {5000, 1000, 500, 100, 50, 10, 5, 2, 1}; // инициализация номиналов рублей (такие же как в конструкторе по умолчанию)
+    double temp_k_nom[4] = {0.5, 0.1, 0.05, 0.01}; // инициализация номиналов копеек
     for (int i = 0; i < R_COUNT; i++) {
         r_nom[i] = temp_r_nom[i];
     }
     for (int i = 0; i < K_COUNT; i++) {
         k_nom[i] = temp_k_nom[i];
     }
-    normalize(amt);
+    normalize(amt); // normalize для распределения суммы amt по номиналам
 }
 
+// конструктор копирования: создает точную копию объекта
 Money::Money(const Money& other) : total(other.total) { // конструктор копирования
     for (int i = 0; i < R_COUNT; i++) {
-        r_nom[i] = other.r_nom[i];
-        r_cnt[i] = other.r_cnt[i];
+        r_nom[i] = other.r_nom[i]; // копируем номиналы рублей
+        r_cnt[i] = other.r_cnt[i]; // копируем количество
     }
     for (int i = 0; i < K_COUNT; i++) {
-        k_nom[i] = other.k_nom[i];
-        k_cnt[i] = other.k_cnt[i];
-    }
+        k_nom[i] = other.k_nom[i]; // копируем номиналы копеек
+        k_cnt[i] = other.k_cnt[i]; // копируем количество
+    } 
 }
 
 void Money::normalize(double amt) { // нормализации суммы по номиналам
     total = amt;
 
-    for (int i = 0; i < R_COUNT; i++) r_cnt[i] = 0; // обнуляем счетчики
-    for (int i = 0; i < K_COUNT; i++) k_cnt[i] = 0;
+    for (int i = 0; i < R_COUNT; i++) r_cnt[i] = 0; // обнуляем счетчики рублей
+    for (int i = 0; i < K_COUNT; i++) k_cnt[i] = 0; // копеек
     
-    int rub = (int)amt;
+    int rub = (int)amt; // получаем целую часть - рубли
     for (int i = 0; i < R_COUNT; i++) {   // распределение рублей
         r_cnt[i] = rub / r_nom[i];
         rub %= r_nom[i];
     }
     
-    int kop = (int)((amt - (int)amt) * 100 + 0.5); // распределение копеек
-    for (int i = 0; i < K_COUNT; i++) {
+    int kop = (int)((amt - (int)amt) * 100 + 0.5); // получаем дробную часть - копейки
+    for (int i = 0; i < K_COUNT; i++) { // распределение копеек по номиналам
         int k_val = (int)(k_nom[i] * 100);
-        k_cnt[i] = kop / k_val;
-        kop %= k_val;
+        k_cnt[i] = kop / k_val; // сколько монет этого номинала нужно
+        kop %= k_val; // остаток для распределения более мелкими монетами
     }
 }
 
-void Money::init(double amt) {
+void Money::init(double amt) { // инициализация существующего объекта новой суммой
     normalize(amt);
 }
 
@@ -107,7 +108,7 @@ void Money::read() { // ввод
     double amt;
     cout << "Введите сумму: ";
     cin >> amt;
-    normalize(amt);
+    normalize(amt); // распределяем введенную сумму по номиналам
 }
 
 void Money::display() const { // вывод
