@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <sstream>
 
 using namespace std;
 
@@ -15,7 +16,6 @@ public:
     Array& operator=(const Array& other);
     virtual ~Array();
 
-
     unsigned char& operator[](int idx); // []
     const unsigned char& operator[](int idx) const;
     int getCount() const; 
@@ -23,6 +23,9 @@ public:
 
     virtual Array* add(const Array& other) const;
     virtual void print() const;
+    
+    friend ostream& operator<<(ostream& os, const Array& array); // операторы ввода-вывода
+    friend istream& operator>>(istream& is, Array& array);
 };
 
 Array::Array(int cnt, unsigned char init_val) : count(cnt) {
@@ -100,11 +103,38 @@ Array* Array::add(const Array& other) const { // виртуальный мето
 }
 
 void Array::print() const {
-    cout << "Массив: ";
-    for (int i = count - 1; i >= 0; i--) {
-        cout << (int)arr[i] << " ";
+    cout << *this;  // Используем оператор вывода
+}
+
+// Оператор вывода для Array
+ostream& operator<<(ostream& os, const Array& array) {
+    os << "Массив: ";
+    for (int i = array.count - 1; i >= 0; i--) {
+        os << (int)array.arr[i] << " ";
     }
-    cout << endl;
+    os << "(размер: " << array.count << ")";
+    return os;
+}
+
+// Оператор ввода для Array
+istream& operator>>(istream& is, Array& array) {
+    cout << "Введите количество элементов (макс. " << array.MAX_SIZE << "): ";
+    is >> array.count;
+    
+    if (array.count < 0 || array.count > array.MAX_SIZE) {
+        cout << "Ошибка: Неверный размер" << endl;
+        array.count = 0;
+        return is;
+    }
+    
+    cout << "Введите " << array.count << " элементов (через пробел): ";
+    for (int i = 0; i < array.count; i++) {
+        int val;
+        is >> val;
+        array.arr[i] = (val >= 0 && val <= 255) ? val : 0;
+    }
+    
+    return is;
 }
 
 class Decimal : public Array {
@@ -121,6 +151,10 @@ public:
     
     Array* add(const Array& other) const override;
     void print() const override;
+    
+    // Операторы ввода-вывода
+    friend ostream& operator<<(ostream& os, const Decimal& decimal);
+    friend istream& operator>>(istream& is, Decimal& decimal);
 };
 
 Decimal::Decimal(int cnt, unsigned char init_val, bool negative) 
@@ -137,7 +171,6 @@ void Decimal::fromInt(int num) { // значения из целого числ�
         return;
     }
 
-    
     is_negative = (num < 0); // модуль
     num = abs(num);
     
@@ -193,12 +226,72 @@ Array* Decimal::add(const Array& other) const { // сложение десяти
 }
 
 void Decimal::print() const {
-    cout << "Десятичное: ";
-    if (is_negative) cout << "-";
-    for (int i = count - 1; i >= 0; i--) {
-        cout << (int)arr[i];
+    cout << *this;  // Используем оператор вывода
+}
+
+// Оператор вывода для Decimal
+ostream& operator<<(ostream& os, const Decimal& decimal) {
+    os << "Десятичное: ";
+    if (decimal.is_negative) os << "-";
+    for (int i = decimal.count - 1; i >= 0; i--) {
+        os << (int)decimal.arr[i];
     }
-    cout << " (как целое: " << toInt() << ")" << endl;
+    os << " (как целое: " << decimal.toInt() << ")";
+    return os;
+}
+
+// Оператор ввода для Decimal
+istream& operator>>(istream& is, Decimal& decimal) {
+    cout << "Введите десятичное число (со знаком): ";
+    string input;
+    is >> input;
+    
+    // Очистка текущего содержимого
+    decimal.count = 0;
+    
+    // Определение знака
+    if (!input.empty() && input[0] == '-') {
+        decimal.is_negative = true;
+        input = input.substr(1); // Удаляем знак минус
+    } else {
+        decimal.is_negative = false;
+        if (!input.empty() && input[0] == '+') {
+            input = input.substr(1); // Удаляем знак плюс
+        }
+    }
+    
+    // Проверка, что все символы - цифры
+    for (char c : input) {
+        if (!isdigit(c)) {
+            cout << "Ошибка: Некорректное десятичное число" << endl;
+            decimal.fromInt(0);
+            return is;
+        }
+    }
+    
+    // Заполнение массива цифрами (в обратном порядке)
+    decimal.count = input.length();
+    if (decimal.count > decimal.MAX_SIZE) {
+        cout << "Ошибка: Слишком длинное число" << endl;
+        decimal.fromInt(0);
+        return is;
+    }
+    
+    for (int i = 0; i < decimal.count; i++) {
+        decimal.arr[decimal.count - 1 - i] = input[i] - '0';
+    }
+    
+    // Удаляем ведущие нули
+    while (decimal.count > 1 && decimal.arr[decimal.count - 1] == 0) {
+        decimal.count--;
+    }
+    
+    // Случай -0
+    if (decimal.count == 1 && decimal.arr[0] == 0) {
+        decimal.is_negative = false;
+    }
+    
+    return is;
 }
 
 class Octal : public Array {
@@ -211,6 +304,10 @@ public:
 
     Array* add(const Array& other) const override;
     void print() const override;
+    
+    // Операторы ввода-вывода
+    friend ostream& operator<<(ostream& os, const Octal& octal);
+    friend istream& operator>>(istream& is, Octal& octal);
 };
 
 Octal::Octal(int cnt, unsigned char init_val) : Array(cnt, init_val) {
@@ -277,69 +374,117 @@ Array* Octal::add(const Array& other) const {
 }
 
 void Octal::print() const {
-    cout << "Восьмеричное: ";
-    for (int i = count - 1; i >= 0; i--) {
-        cout << (int)arr[i];
+    cout << *this;  // Используем оператор вывода
+}
+
+// Оператор вывода для Octal
+ostream& operator<<(ostream& os, const Octal& octal) {
+    os << "Восьмеричное: ";
+    for (int i = octal.count - 1; i >= 0; i--) {
+        os << (int)octal.arr[i];
     }
-    cout << " (как целое: " << toInt() << ")" << endl;
+    os << " (как целое: " << octal.toInt() << ")";
+    return os;
+}
+
+// Оператор ввода для Octal
+istream& operator>>(istream& is, Octal& octal) {
+    cout << "Введите восьмеричное число (без префикса): ";
+    string input;
+    is >> input;
+    
+    // Очистка текущего содержимого
+    octal.count = 0;
+    
+    // Проверка, что все символы - восьмеричные цифры
+    for (char c : input) {
+        if (c < '0' || c > '7') {
+            cout << "Ошибка: Некорректное восьмеричное число" << endl;
+            octal.fromInt(0);
+            return is;
+        }
+    }
+    
+    // Заполнение массива цифрами (в обратном порядке)
+    octal.count = input.length();
+    if (octal.count > octal.MAX_SIZE) {
+        cout << "Ошибка: Слишком длинное число" << endl;
+        octal.fromInt(0);
+        return is;
+    }
+    
+    for (int i = 0; i < octal.count; i++) {
+        octal.arr[octal.count - 1 - i] = input[i] - '0';
+    }
+    
+    // Удаляем ведущие нули
+    while (octal.count > 1 && octal.arr[octal.count - 1] == 0) {
+        octal.count--;
+    }
+    
+    return is;
 }
 
 void demo() {
     cout << "=== Демонстрация виртуальных методов ===" << endl;
 
+    // Используем операторы ввода
     Decimal dec1, dec2;
-    dec1.fromInt(123);
-    dec2.fromInt(456);
+    cout << "\nВведите первое десятичное число:" << endl;
+    cin >> dec1;
+    cout << "\nВведите второе десятичное число:" << endl;
+    cin >> dec2;
     
     Octal oct1, oct2;
-    oct1.fromInt(123);  // 123 в 10-ной = 173 в 8-ной
-    oct2.fromInt(456);  // 456 в 10-ной = 710 в 8-ной
+    cout << "\nВведите первое восьмеричное число:" << endl;
+    cin >> oct1;
+    cout << "\nВведите второе восьмеричное число:" << endl;
+    cin >> oct2;
 
     Array* arrays[] = {&dec1, &dec2, &oct1, &oct2};
     
-    cout << "\nИсходные числа:" << endl;
+    cout << "\nИсходные числа (используем операторы вывода):" << endl;
     for (int i = 0; i < 4; i++) {
-        arrays[i]->print();
+        cout << *arrays[i] << endl;
     }
 
     cout << "\nПрямое сложение Decimal:" << endl;
     Array* res1 = dec1.add(dec2);
     if (res1) {
-        res1->print();
+        cout << *res1 << endl;
         delete res1;
     }
 
     cout << "\nПрямое сложение Octal:" << endl;
     Array* res2 = oct1.add(oct2);
     if (res2) {
-        res2->print();
+        cout << *res2 << endl;
         delete res2;
     }
 
     cout << "\nПолиморфизм (через Array*):" << endl;
     Array* poly1 = arrays[0]->add(*arrays[1]);
     if (poly1) {
-        poly1->print();
+        cout << *poly1 << endl;
         delete poly1;
     }
 
     Array* poly2 = arrays[2]->add(*arrays[3]);
     if (poly2) {
-        poly2->print();
+        cout << *poly2 << endl;
         delete poly2;
     }
-
 
     cout << "\nОбщий интерфейс Array:" << endl;
     for (int i = 0; i < 4; i += 2) {
         Array* temp = arrays[i]->add(*arrays[i + 1]);
         if (temp) {
-            temp->print();
+            cout << *temp << endl;
             delete temp;
         }
     }
+    
 }
-
 int main() {
     demo();
     return 0;
