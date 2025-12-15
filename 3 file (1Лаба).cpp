@@ -32,8 +32,7 @@ public:
     
     void input();
 
-    // Операторы ввода-вывода
-    friend ostream& operator<<(ostream& os, const Triad& triad);
+    friend ostream& operator<<(ostream& os, const Triad& triad); // операторы ввода-вывода
     friend istream& operator>>(istream& is, Triad& triad);
 };
 
