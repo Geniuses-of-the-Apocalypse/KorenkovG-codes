@@ -103,11 +103,10 @@ Array* Array::add(const Array& other) const { // виртуальный мето
 }
 
 void Array::print() const {
-    cout << *this;  // Используем оператор вывода
+    cout << *this;  // используем оператор вывода
 }
 
-// Оператор вывода для Array
-ostream& operator<<(ostream& os, const Array& array) {
+ostream& operator<<(ostream& os, const Array& array) { // оператор вывода для массива
     os << "Массив: ";
     for (int i = array.count - 1; i >= 0; i--) {
         os << (int)array.arr[i] << " ";
@@ -116,8 +115,7 @@ ostream& operator<<(ostream& os, const Array& array) {
     return os;
 }
 
-// Оператор ввода для Array
-istream& operator>>(istream& is, Array& array) {
+istream& operator>>(istream& is, Array& array) { // оператор ввода для массива
     cout << "Введите количество элементов (макс. " << array.MAX_SIZE << "): ";
     is >> array.count;
     
@@ -152,8 +150,7 @@ public:
     Array* add(const Array& other) const override;
     void print() const override;
     
-    // Операторы ввода-вывода
-    friend ostream& operator<<(ostream& os, const Decimal& decimal);
+    friend ostream& operator<<(ostream& os, const Decimal& decimal);  // операторы ввода-вывода
     friend istream& operator>>(istream& is, Decimal& decimal);
 };
 
@@ -226,7 +223,7 @@ Array* Decimal::add(const Array& other) const { // сложение десяти
 }
 
 void Decimal::print() const {
-    cout << *this;  // Используем оператор вывода
+    cout << *this;  // используем оператор вывода
 }
 
 // Оператор вывода для Decimal
@@ -252,16 +249,15 @@ istream& operator>>(istream& is, Decimal& decimal) {
     // Определение знака
     if (!input.empty() && input[0] == '-') {
         decimal.is_negative = true;
-        input = input.substr(1); // Удаляем знак минус
+        input = input.substr(1); // удаляем знак минус
     } else {
         decimal.is_negative = false;
         if (!input.empty() && input[0] == '+') {
-            input = input.substr(1); // Удаляем знак плюс
+            input = input.substr(1); // удаляем знак плюс
         }
     }
     
-    // Проверка, что все символы - цифры
-    for (char c : input) {
+    for (char c : input) { // проверка, что все символы - цифры
         if (!isdigit(c)) {
             cout << "Ошибка: Некорректное десятичное число" << endl;
             decimal.fromInt(0);
@@ -269,8 +265,7 @@ istream& operator>>(istream& is, Decimal& decimal) {
         }
     }
     
-    // Заполнение массива цифрами (в обратном порядке)
-    decimal.count = input.length();
+    decimal.count = input.length();    // заполнение массива цифрами (в обратном порядке)
     if (decimal.count > decimal.MAX_SIZE) {
         cout << "Ошибка: Слишком длинное число" << endl;
         decimal.fromInt(0);
@@ -281,14 +276,12 @@ istream& operator>>(istream& is, Decimal& decimal) {
         decimal.arr[decimal.count - 1 - i] = input[i] - '0';
     }
     
-    // Удаляем ведущие нули
-    while (decimal.count > 1 && decimal.arr[decimal.count - 1] == 0) {
+    while (decimal.count > 1 && decimal.arr[decimal.count - 1] == 0) {  // удаляем ведущие нули
         decimal.count--;
     }
     
-    // Случай -0
     if (decimal.count == 1 && decimal.arr[0] == 0) {
-        decimal.is_negative = false;
+        decimal.is_negative = false; // случай -0
     }
     
     return is;
@@ -305,8 +298,7 @@ public:
     Array* add(const Array& other) const override;
     void print() const override;
     
-    // Операторы ввода-вывода
-    friend ostream& operator<<(ostream& os, const Octal& octal);
+    friend ostream& operator<<(ostream& os, const Octal& octal); // операторы ввода-вывода
     friend istream& operator>>(istream& is, Octal& octal);
 };
 
@@ -374,7 +366,7 @@ Array* Octal::add(const Array& other) const {
 }
 
 void Octal::print() const {
-    cout << *this;  // Используем оператор вывода
+    cout << *this;  // используем оператор вывода
 }
 
 // Оператор вывода для Octal
@@ -387,17 +379,14 @@ ostream& operator<<(ostream& os, const Octal& octal) {
     return os;
 }
 
-// Оператор ввода для Octal
-istream& operator>>(istream& is, Octal& octal) {
+istream& operator>>(istream& is, Octal& octal) { // оператор ввода 
     cout << "Введите восьмеричное число (без префикса): ";
     string input;
     is >> input;
     
-    // Очистка текущего содержимого
     octal.count = 0;
     
-    // Проверка, что все символы - восьмеричные цифры
-    for (char c : input) {
+    for (char c : input) { // проверка, что все символы - восьмеричные цифры
         if (c < '0' || c > '7') {
             cout << "Ошибка: Некорректное восьмеричное число" << endl;
             octal.fromInt(0);
@@ -405,8 +394,7 @@ istream& operator>>(istream& is, Octal& octal) {
         }
     }
     
-    // Заполнение массива цифрами (в обратном порядке)
-    octal.count = input.length();
+    octal.count = input.length(); // заполнение массива цифрами (в обратном порядке)
     if (octal.count > octal.MAX_SIZE) {
         cout << "Ошибка: Слишком длинное число" << endl;
         octal.fromInt(0);
@@ -417,8 +405,7 @@ istream& operator>>(istream& is, Octal& octal) {
         octal.arr[octal.count - 1 - i] = input[i] - '0';
     }
     
-    // Удаляем ведущие нули
-    while (octal.count > 1 && octal.arr[octal.count - 1] == 0) {
+    while (octal.count > 1 && octal.arr[octal.count - 1] == 0) { // удаляем ведущие нули
         octal.count--;
     }
     
@@ -428,9 +415,8 @@ istream& operator>>(istream& is, Octal& octal) {
 void demo() {
     cout << "=== Демонстрация виртуальных методов ===" << endl;
 
-    // Используем операторы ввода
     Decimal dec1, dec2;
-    cout << "\nВведите первое десятичное число:" << endl;
+    cout << "\nВведите первое десятичное число:" << endl; // используем операторы ввода
     cin >> dec1;
     cout << "\nВведите второе десятичное число:" << endl;
     cin >> dec2;
