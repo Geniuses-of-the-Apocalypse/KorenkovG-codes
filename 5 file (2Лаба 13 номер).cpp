@@ -15,22 +15,22 @@ class BTree {
         int key_count;
         bool is_leaf;
         int capacity;
-        
+
         Node(bool leaf = false, int order = DEFAULT_ORDER) 
-            : next(nullptr), key_count(0), is_leaf(leaf), capacity(order * 2 - 1) {
-            keys = new T[capacity];
-            children = new Node*[capacity + 1];
-            for (int i = 0; i <= capacity; ++i) children[i] = nullptr;
-        }
+        : next(nullptr), key_count(0), is_leaf(leaf), capacity(order * 2 - 1) {
+        keys = new T[capacity];
+        children = new Node*[capacity + 1];
+        for (int i = 0; i <= capacity; ++i) children[i] = nullptr;
+    }
         
         ~Node() {
-            delete[] keys;
-            if (!is_leaf) {
-                for (int i = 0; i <= key_count; ++i) 
-                    if (children[i]) delete children[i];
-            }
-            delete[] children;
+        delete[] keys;
+        if (!is_leaf) {
+        for (int i = 0; i <= key_count; ++i) 
+            if (children[i]) delete children[i];
         }
+        delete[] children;
+    }
         
         int findKeyIndex(T vrem) {
             int idx = 0;
@@ -57,33 +57,46 @@ class BTree {
 
     // Основные вспомогательные методы
     void splitChild(Node* parent, int idx, Node* child) {
-        Node* new_child = new Node(child->is_leaf, order);
-        int split_pos = child->key_count / 2;
-        T middle_key = child->keys[split_pos];
+    Node* new_child = new Node(child->is_leaf, order);
+    int split_pos = order - 1;  // Фиксированная позиция разделения
+    T middle_key = child->keys[split_pos];
+    
+    if (child->is_leaf) {
+        // Для листового узла копируем ключи включая средний
+        for (int i = 0; i < order; ++i) 
+            new_child->keys[i] = child->keys[i + split_pos];
         
-        if (child->is_leaf) {
-            for (int i = 0; i < split_pos; ++i) 
-                new_child->keys[i] = child->keys[i + split_pos];
-            new_child->key_count = child->key_count - split_pos;
-            child->key_count = split_pos;
-            new_child->next = child->next;
-            child->next = new_child;
-        } else {
-            for (int i = 0; i < split_pos; ++i) 
-                new_child->keys[i] = child->keys[i + split_pos + 1];
-            for (int i = 0; i <= split_pos; ++i) 
-                new_child->children[i] = child->children[i + split_pos + 1];
-            new_child->key_count = split_pos;
-            child->key_count = split_pos;
-        }
+        new_child->key_count = order;
+        child->key_count = order - 1;
         
-        // Вставляем в родителя
-        for (int i = parent->key_count; i > idx; --i) parent->keys[i] = parent->keys[i - 1];
-        for (int i = parent->key_count + 1; i > idx + 1; --i) parent->children[i] = parent->children[i - 1];
-        parent->keys[idx] = middle_key;
-        parent->children[idx + 1] = new_child;
-        parent->key_count++;
+        // Обновляем связи между листьями
+        new_child->next = child->next;
+        child->next = new_child;
+        
+        // Для B+ дерева средний ключ дублируется в родителе
+        // и остается в новом листе
+    } else {
+        // Для внутреннего узла
+        for (int i = 0; i < order - 1; ++i) 
+            new_child->keys[i] = child->keys[i + split_pos + 1];
+        
+        for (int i = 0; i < order; ++i) 
+            new_child->children[i] = child->children[i + split_pos + 1];
+        
+        new_child->key_count = order - 1;
+        child->key_count = order - 1;
     }
+    
+    // Вставляем ключ в родителя
+    for (int i = parent->key_count; i > idx; --i) 
+        parent->keys[i] = parent->keys[i - 1];
+    for (int i = parent->key_count + 1; i > idx + 1; --i) 
+        parent->children[i] = parent->children[i - 1];
+    
+    parent->keys[idx] = middle_key;
+    parent->children[idx + 1] = new_child;
+    parent->key_count++;
+}
     
     void insertNonFull(Node* node, T vrem) {
         int idx = node->findKeyIndex(vrem);
