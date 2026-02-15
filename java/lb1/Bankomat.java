@@ -50,5 +50,9 @@ public class Bankomat {
 
     public String toString() {
         return "Банкомат " + id + ": " + totalMoney() + " руб";
+
+    public void display() {
+        System.out.println(toString());
+    }
     }
 }
