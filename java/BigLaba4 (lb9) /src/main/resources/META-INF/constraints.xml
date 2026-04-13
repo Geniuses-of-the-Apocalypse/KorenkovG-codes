@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mappings
+        xmlns="http://xmlns.jcp.org/xml/ns/validation/mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        version="2.0">
+
+    <bean class="guu.ru.biglaba4.PureNaselennyjPunkt" ignore-annotations="true">
+
+        <!-- Код -->
+        <field name="kod">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Код населённого пункта должен быть задан</message>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Size">
+                <message>Код должен быть от 5 до 10 символов</message>
+                <element name="min">5</element>
+                <element name="max">10</element>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Код должен состоять только из заглавных латинских букв и цифр</message>
+                <element name="regexp">^[A-Z0-9]{5,10}$</element>
+            </constraint>
+        </field>
+
+        <!-- Название -->
+        <field name="nazvanie">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Название населённого пункта должно быть задано</message>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Size">
+                <message>Название должно быть от 2 до 50 символов</message>
+                <element name="min">2</element>
+                <element name="max">50</element>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Название должно содержать только русские буквы, пробелы и дефисы</message>
+                <element name="regexp">^[А-Яа-яЁё\s-]{2,50}$</element>
+            </constraint>
+        </field>
+
+        <!-- Тип -->
+        <field name="tip">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Тип населённого пункта должен быть задан</message>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Тип должен быть: город, село, деревня, посёлок или ПГТ</message>
+                <element name="regexp">^(город|село|деревня|посёлок|ПГТ)$</element>
+            </constraint>
+        </field>
+
+        <!-- Население -->
+        <field name="naselenie">
+            <constraint annotation="org.hibernate.validator.constraints.Range">
+                <message>Численность населения должна быть от 1 до 20 000 000</message>
+                <element name="min">1</element>
+                <element name="max">20000000</element>
+            </constraint>
+        </field>
+
+        <!-- Регион -->
+        <field name="region">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Регион должен быть задан</message>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Регион должен содержать только русские буквы, пробелы и дефисы (3-40 символов)</message>
+                <element name="regexp">^[А-Яа-яЁё\s-]{3,40}$</element>
+            </constraint>
+        </field>
+
+        <!-- Индекс -->
+        <field name="postIndex">
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Почтовый индекс должен состоять из 6 цифр</message>
+                <element name="regexp">^\d{6}$</element>
+            </constraint>
+        </field>
+
+        <!-- Площадь -->
+        <field name="ploshchad">
+            <constraint annotation="javax.validation.constraints.DecimalMin">
+                <message>Площадь должна быть больше 0</message>
+                <element name="value">0.0</element>
+                <element name="inclusive">false</element>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.DecimalMax">
+                <message>Площадь не должна превышать 1 000 000 кв.км</message>
+                <element name="value">1000000.0</element>
+            </constraint>
+        </field>
+
+    </bean>
+
+</constraint-mappings>

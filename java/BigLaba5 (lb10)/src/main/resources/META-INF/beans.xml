@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"
+       version="2.0"
+       bean-discovery-mode="all">
+
+    <!--
+        bean-discovery-mode определяет, какие классы будут CDI-бинами:
+
+        - "all" : все классы в проекте становятся CDI-бинами
+        - "annotated" : только классы с аннотациями (@Dependent, @RequestScoped и т.д.)
+        - "none" : CDI полностью отключен
+
+        Для валидации нам подходит любой режим, так как мы не используем CDI напрямую.
+        Но hibernate-validator-cdi может требовать наличия этого файла.
+    -->
+
+    <!--
+        Альтернативы (если нужно заменить реализации):
+
+    <alternatives>
+        <class>guu.ru.biglaba5.MyAlternativeValidator</class>
+    </alternatives>
+    -->
+
+    <!--
+        Декораторы (для обогащения функциональности):
+
+    <decorators>
+        <class>guu.ru.biglaba5.LoggingDecorator</class>
+    </decorators>
+    -->
+
+    <!--
+        Перехватчики (для аспектно-ориентированного программирования):
+
+    <interceptors>
+        <class>guu.ru.biglaba5.TransactionInterceptor</class>
+    </interceptors>
+    -->
+
+</beans>
