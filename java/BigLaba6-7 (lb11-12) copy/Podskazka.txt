@@ -1,0 +1,67 @@
+КОМАНДЫ ДЛЯ КОНСОЛИ ИЛИ ДЛЯ БРАУЗЕРА:
+
+1) Браузерный вывод:
+Swagger UI: http://localhost:8080/swagger-ui.html
+OpenAPI JSON: http://localhost:8080/api-docs
+
+- http://localhost:8080/api/naselenny-punkt
+
+- http://localhost:8080/api/naselenny-punkt/1
+
+- http://localhost:8080/api/naselenny-punkt/search?name=Моск
+
+- http://localhost:8080/api/naselenny-punkt/type/город
+
+- http://localhost:8080/api/naselenny-punkt/count
+
+2) Консольные командочки:
+
+ - 1. ПОКАЗАТЬ ВСЕ записи
+curl http://localhost:8080/api/naselenny-punkt
+
+ - 2. ПОКАЗАТЬ запись по ID
+curl http://localhost:8080/api/naselenny-punkt/1
+
+ - 3. ДОБАВИТЬ новую запись
+curl -X POST http://localhost:8080/api/naselenny-punkt -H "Content-Type: application/json" -d "{\"name\":\"Екатеринбург\",\"type\":\"город\",\"population\":1493749,\"area\":1111.0}"
+
+ - 4. ИЗМЕНИТЬ запись
+curl -X PUT http://localhost:8080/api/naselenny-punkt/7 -H "Content-Type: application/json" -d "{\"name\":\"Екатеринбург\",\"type\":\"город\",\"population\":1500000,\"area\":1111.0}"
+
+ - 5. УДАЛИТЬ запись
+curl -X DELETE http://localhost:8080/api/naselenny-punkt/7
+
+ - 6. ПОИСК по имени
+curl "http://localhost:8080/api/naselenny-punkt/search?name=Моск"
+
+ - 7. ФИЛЬТР по типу
+curl "http://localhost:8080/api/naselenny-punkt/type/город"
+
+ - 8. КОЛИЧЕСТВО записей
+curl "http://localhost:8080/api/naselenny-punkt/count"
+
+3) PowerShell:
+
+ - 1. ПОКАЗАТЬ ВСЕ записи
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt" -Method GET | Select-Object -ExpandProperty Content
+
+ - 2. ПОКАЗАТЬ запись по ID
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt/1" -Method GET | Select-Object -ExpandProperty Content
+
+ - 3. ДОБАВИТЬ новую запись
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt" -Method POST -ContentType "application/json" -Body '{"name":"Екатеринбург","type":"город","population":1493749,"area":1111.0}' | Select-Object -ExpandProperty Content
+
+ - 4. ИЗМЕНИТЬ запись
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt/7" -Method PUT -ContentType "application/json" -Body '{"name":"Екатеринбург","type":"город","population":1500000,"area":1111.0}' | Select-Object -ExpandProperty Content
+
+ - 5. УДАЛИТЬ запись
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt/7" -Method DELETE
+
+ - 6. ПОИСК по имени
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt/search?name=Моск" -Method GET | Select-Object -ExpandProperty Content
+
+ - 7. ФИЛЬТР по типу
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt/type/город" -Method GET | Select-Object -ExpandProperty Content
+
+ - 8. КОЛИЧЕСТВО записей
+Invoke-WebRequest -Uri "http://localhost:8080/api/naselenny-punkt/count" -Method GET | Select-Object -ExpandProperty Content
