@@ -25,13 +25,8 @@ def compute_revenue(rows: list[dict]) -> float:
 
 # 3
 def top_item(rows: list[dict]) -> Optional[dict]:
-    if not rows:
-        return None
-    try:
         return\
             max(rows, key=lambda x: int(x["quantity"]) * float(x["price"]))
-    except (ValueError, TypeError, KeyError):
-        return None
 
 
 # main
