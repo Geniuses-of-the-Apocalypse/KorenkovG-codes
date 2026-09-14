@@ -13,12 +13,14 @@ banana,1,3
 
 # 1
 def parse_csv(data: str) -> list[dict]:
-    return list(csv.DictReader(data.splitlines()))
+    return\
+        list(csv.DictReader(data.splitlines()))
 
 
 # 2
 def compute_revenue(rows: list[dict]) -> float:
-    return sum(map(lambda x: int(x["quantity"]) * float(x["price"]), rows))
+    return\
+        sum(map(lambda x: int(x["quantity"]) * float(x["price"]), rows))
 
 
 # 3
@@ -26,7 +28,8 @@ def top_item(rows: list[dict]) -> Optional[dict]:
     if not rows:
         return None
     try:
-        return max(rows, key=lambda x: int(x["quantity"]) * float(x["price"]))
+        return\
+            max(rows, key=lambda x: int(x["quantity"]) * float(x["price"]))
     except (ValueError, TypeError, KeyError):
         return None
 
@@ -65,6 +68,3 @@ print(top_item(rows))
 # Функция top_item:
 # Вход list[dict]. Выход Optional[dict] — словарь с максимальной выручкой, либо None, если список пуст или данные невалидны.
 #
-
-
-
