@@ -2,7 +2,7 @@ import csv
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, field_validator
 
 # КОМАНДЫ и запросы:
 # cd C:\Users\PythonOpenIDE\OpenIDEProjects\Laboratorki - выбор папки
@@ -77,42 +77,32 @@ def top_item(rows: list[dict]) -> Optional[dict]:  # рекурсивный по
         return None
     if len(rows) == 1:
         return rows[0]
-
     best_of_rest = top_item(rows[1:])
     return rows[0] if row_revenue(rows[0]) > row_revenue(best_of_rest) else best_of_rest
 
 
 
 @app.post("/analyze", response_model=CSVResponse)
-def analyze_csv(request: CSVRequest):             # принимает CSV строку и возвращает выручку, а также товар с макс выручкой
+def analyze_csv(request: CSVRequest):          # принимает CSV строку и возвращает выручку, а также товар с макс выручкой
     raw_rows = parse_csv(request.csv_data)
     if not raw_rows:
-        raise HTTPException(status_code=400, detail=" CSV не содержит данных ")
+        raise HTTPException(400, " CSV не содержит данных ")
 
-    required = {"item", "quantity", "price"}    # проверка, что все нужные колонки на месте
-    actual = set(raw_rows[0].keys())
-    if not required.issubset(actual):
-        missing = required - actual
-        raise HTTPException(
-            status_code=422,
-            detail=f" Не хватает колонок: {missing} ",
-        )
+    required = {"item", "quantity", "price"}       # проверка, что все нужные колонки на месте
+    if missing := required - set(raw_rows[0].keys()):
+        raise HTTPException(422, f" Не хватает колонок: {missing} ")
 
     validated_rows: list[RowModel] = []
-    for i, row in enumerate(raw_rows, start=2):  # валидируем каждую строку через Pydantic
+    for i, row in enumerate(raw_rows, 2):          # валидируем каждую строку через Pydantic
         try:
             validated_rows.append(RowModel(**row))
         except Exception as e:
-            raise HTTPException(
-                status_code=422,
-                detail=f"Ошибка в строке {i}: {e}",
-            )
+            raise HTTPException(422, f" Ошибка в строке {i}: {e} ")
 
-    revenue = compute_revenue(raw_rows) # подсчёт метрик
-    top = top_item(raw_rows)
-
+    # подсчёт метрик
     return CSVResponse(
         rows=validated_rows,
-        revenue=revenue,
-        top_item=RowModel(**top),
+        revenue=compute_revenue(raw_rows),
+        top_item=RowModel(**top_item(raw_rows)),
+
     )
