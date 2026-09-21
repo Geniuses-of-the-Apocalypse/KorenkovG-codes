@@ -29,17 +29,14 @@ def top_item(rows: list[dict]) -> Optional[dict]:
         max(rows, key=lambda x: float(x["quantity"]) * float(x["price"]))
 
 
-# main
-rows = parse_csv(CSV_DATA)
-
 print("Данные: ")
-print(rows)
+print(parse_csv(CSV_DATA))
 
-print("\n Выручка: ", compute_revenue(rows))
+print("\n Выручка: ", compute_revenue(parse_csv(CSV_DATA)))
 
 print("\n Товар с максимальной выручкой: ")
-print(top_item(rows))
-print(f"Сумма выручки этого товара: {float(top_item(rows)['quantity']) * float(top_item(rows)['price'])}")
+print(top_item(parse_csv(CSV_DATA)))
+print(f"Сумма выручки этого товара: {float(top_item(parse_csv(CSV_DATA))['quantity']) * float(top_item(parse_csv(CSV_DATA))['price'])}")
 
 # 4
 #
