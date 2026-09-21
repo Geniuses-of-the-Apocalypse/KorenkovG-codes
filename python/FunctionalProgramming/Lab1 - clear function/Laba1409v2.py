@@ -4,6 +4,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, field_validator
 
+
 # КОМАНДЫ и запросы:
 # cd C:\Users\PythonOpenIDE\OpenIDEProjects\Laboratorki - выбор папки
 # .venv\Scripts\activate - активирование виртуального окружения
