@@ -20,13 +20,13 @@ def parse_csv(data: str) -> list[dict]:
 # 2
 def compute_revenue(rows: list[dict]) -> float:
     return \
-        sum(map(lambda x: int(x["quantity"]) * float(x["price"]), rows))
+        sum(map(lambda x: float(x["quantity"]) * float(x["price"]), rows))
 
 
 # 3
 def top_item(rows: list[dict]) -> Optional[dict]:
     return \
-        max(rows, key=lambda x: int(x["quantity"]) * float(x["price"]))
+        max(rows, key=lambda x: float(x["quantity"]) * float(x["price"]))
 
 
 # main
