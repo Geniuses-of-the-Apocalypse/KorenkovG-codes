@@ -39,7 +39,7 @@ print("\n Выручка: ", compute_revenue(rows))
 
 print("\n Товар с максимальной выручкой: ")
 print(top_item(rows))
-
+print(f"Сумма выручки этого товара: {float(top_item(rows)['quantity']) * float(top_item(rows)['price'])}")
 
 # 4
 #
