@@ -6,13 +6,18 @@ CSV_TEXT = """\
 Привет, текст  тест полный.
 Ку. Даров. Куку.
 Тест, т, т, т, т, т, т, тест.
+КУРВАТИЛОБАВ
+
+Т Т Т Т Т Т Т Т
+
+
 """
 
 
 # 1
 def split_words(text: str) -> list[str]:
     return \
-        re.findall(r'[a-zа-яё]+', text.lower())
+        re.findall(r'[а-яё]+', text.lower())
 
 
 # 2
@@ -32,7 +37,6 @@ print(CSV_TEXT)
 
 print(" \nСлова: ", split_words(CSV_TEXT))
 print(" \nЧастоты слов: ", count_word_frequencies(split_words(CSV_TEXT)))
-
 print(" \nСамое частое слово: ", top_word(count_word_frequencies(split_words(CSV_TEXT))))
 print(f" Количество вхождений: {count_word_frequencies(split_words(CSV_TEXT))[top_word(count_word_frequencies(split_words(CSV_TEXT)))] if top_word(count_word_frequencies(split_words(CSV_TEXT))) else 0}")
 
