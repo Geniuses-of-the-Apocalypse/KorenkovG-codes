@@ -31,7 +31,7 @@ class Failure(Generic[E]):
     error: E
 
 
-Result = Union[Success[T], Failure[E]]
+type Result[T, E] = Union[Success[T], Failure[E]]
 
 def load_users() -> Result[list[User], str]:
     users_data = [
