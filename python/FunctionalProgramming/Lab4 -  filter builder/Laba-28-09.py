@@ -1,5 +1,7 @@
 from functools import partial
 
+# d06e68b0b362a5f523f9fc3700d36840242d60e24459f7230eb2b3ebdd46bcfb
+
 # 1
 filter_by = lambda key: lambda value: lambda items: tuple(item for item in items if item.get(key) == value)
 
