@@ -16,6 +16,5 @@ print(filter_tools(tool))
 
 # 3
 greater_than = lambda threshold: lambda x: x > threshold
-over_five = greater_than(5)
 numbers = [12, 6123, 8, 2, 1]
-print(list(filter(over_five, numbers)))
+print(list(filter(greater_than(5), numbers)))
