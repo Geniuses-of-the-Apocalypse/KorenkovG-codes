@@ -1,6 +1,6 @@
 from functools import reduce
 
-students = [
+STUDENTS = [
     {"name": "Анна", "age": 20, "grade": 4.5},
     {"name": "Борис", "age": 22, "grade": 3.8},
     {"name": "Виктор", "age": 19, "grade": 4.2},
@@ -9,21 +9,21 @@ students = [
 ]
 
 # 1
-formatted_students = list(map(lambda s: f"Имя: {s['name']}, Оценка: {s['grade']}",students))
+FORM_STUDENTS = list(map(lambda s: f"name: {s['name']}, mark: {s['grade']}",STUDENTS))
 
 # 2
-top_students = list(filter(lambda s: s['grade'] > 4.0,students))
+TOP_STUDENTS = list(filter(lambda s: s['grade'] > 4.0,STUDENTS))
 
 # 3
-sum_and_count = reduce(lambda acc, s: (acc[0] + s['age'], acc[1] + 1),top_students, (0, 0))
-average_age = sum_and_count[0] / sum_and_count[1] if sum_and_count[1] else None
+AGE, COUNT = reduce(lambda acc, student: (acc[0] + student["age"], acc[1] + 1), TOP_STUDENTS, (0, 0))
+
+
 
 print("-")
-for line in formatted_students: print(line)
+print(FORM_STUDENTS)
 
 print("-")
-print([s['name'] for s in top_students])
+print(TOP_STUDENTS)
 
 print("-")
-if average_age is not None: print(f"средний возраст: {average_age}")
-else: print("нет студентов для счёта")
+print(AGE / COUNT)
