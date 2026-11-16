@@ -1,3 +1,5 @@
+#5698e9388d28c6e9d5cf0582bb98fa888b0a9a874984a364a051b5476682ea96
+
 from functools import reduce
 
 STUDENTS = tuple((
@@ -11,11 +13,12 @@ STUDENTS = tuple((
 FORM_STUDENTS = tuple(map(lambda s: f"name: {s['name']}, mark: {s['grade']}",STUDENTS))
 
 # 2
-def FILTER(MIN_GRADE):
-    def INNER(STUDENT):
-        return STUDENT["grade"] > MIN_GRADE
-    return INNER
-TOP_STUDENTS = tuple(filter(FILTER(4.0), STUDENTS))
+def top(students, min_grade=4.0):
+    def is_top(student):               
+        return student["grade"] > min_grade
+    return tuple(filter(is_top, students))
+
+TOP_STUDENTS = top(STUDENTS)
 
 # TOP_STUDENTS = tuple(filter(lambda s: s['grade'] > 4.0,STUDENTS))
 
@@ -23,7 +26,7 @@ TOP_STUDENTS = tuple(filter(FILTER(4.0), STUDENTS))
 AGE, COUNT = reduce(lambda acc, student: (acc[0] + student["age"], acc[1] + 1), TOP_STUDENTS, (0, 0))
 
 
-#--------------------
+
 print("1-")
 print(FORM_STUDENTS)
 
