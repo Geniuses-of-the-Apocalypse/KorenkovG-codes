@@ -4,7 +4,7 @@ ORDERS = tuple((
     {"id": 3, "total": 9990, "status": "new"}, ))
 
 # 1
-totals_sums = tuple(map(lambda o: o["total"], ORDERS))
+totals_sums = tuple(map(lambda x: x["total"], ORDERS))
 
 
 # 2
