@@ -1,25 +1,33 @@
-ORDERS = tuple((
-    {"id": 1, "total": 1200, "status": "paid"},
-    {"id": 2, "total": 322,  "status": "new"},
-    {"id": 3, "total": 9990, "status": "new"}, ))
+from typing import Any, Callable
 
 # 1
-total = tuple(map(lambda x: x["total"], ORDERS))
+def total():
+    def run(orders):
+        return tuple(map(lambda x: x["total"], orders))
+    return run
 
 
 # 2
 class OptionalBox:
-    def __init__(self, value): self.value = value
-    def map(self, fn): return OptionalBox(None if self.value is None else fn(self.value))
+    def __init__(self, v): self.v = v
+    def map(self, f): return OptionalBox(f(self.v)) if self.v is not None else OptionalBox(None)
+    def val(self): return self.v
 
 
 # 3
-def find_order(orders, order_id):
+def find_order(orders_iter, order_id):
     def matches(order):
         return order["id"] == order_id
-    return OptionalBox(next(filter(matches, orders), None))
+    def search():
+        return next(filter(matches, orders_iter), None)
+    return OptionalBox(search())
 
 #---вывод
-print(total)
-print(find_order(ORDERS, 2).map(lambda x: x["total"]).value)
-print(find_order(ORDERS, 999).map(lambda x: x["total"]).value)
+
+data =[{"id": 1, "total": 1200, "status": "paid"}, {"id": 2, "total": 322,  "status": "new"}, {"id": 3, "total": 9990, "status": "new"}]
+
+get_totals = total()
+
+print(get_totals(data))
+print(find_order(data, 2).map(lambda x: x["total"]).val())
+print(find_order(data, 999).map(lambda x: x["total"]).val())
