@@ -4,7 +4,7 @@ ORDERS = tuple((
     {"id": 3, "total": 9990, "status": "new"}, ))
 
 # 1
-totals_sums = tuple(map(lambda x: x["total"], ORDERS))
+total = tuple(map(lambda x: x["total"], ORDERS))
 
 
 # 2
@@ -17,6 +17,6 @@ class OptionalBox:
 def find_order(orders, order_id): return OptionalBox(next((x for x in orders if x["id"] == order_id), None))
 
 #---вывод
-print(totals_sums)
+print(total)
 print(find_order(ORDERS, 2).map(lambda x: x["total"]).value)
 print(find_order(ORDERS, 999).map(lambda x: x["total"]).value)
