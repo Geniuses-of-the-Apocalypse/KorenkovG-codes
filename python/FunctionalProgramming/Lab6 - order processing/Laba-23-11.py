@@ -1,6 +1,6 @@
 ORDERS = tuple((
     {"id": 1, "total": 1200, "status": "paid"},
-    {"id": 2, "total": 350,  "status": "new"},
+    {"id": 2, "total": 322,  "status": "new"},
     {"id": 3, "total": 9990, "status": "new"}, ))
 
 # 1
@@ -14,7 +14,10 @@ class OptionalBox:
 
 
 # 3
-def find_order(orders, order_id): return OptionalBox(next((x for x in orders if x["id"] == order_id), None))
+def find_order(orders, order_id):
+    def matches(order):
+        return order["id"] == order_id
+    return OptionalBox(next(filter(matches, orders), None))
 
 #---вывод
 print(total)
